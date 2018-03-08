@@ -31,29 +31,33 @@ CREATE TABLE ExerciseGroup(
 );
 
 CREATE TABLE ExerciseInWorkout(
-  workoutId integer NOT NULL PRIMARY KEY,
-  exerciseId integer NOT NULL PRIMARY KEY,
+  workoutId integer NOT NULL,
+  exerciseId integer NOT NULL,
   FOREIGN KEY (workoutId) REFERENCES Workout(workoutId),
-  FOREIGN KEY (exerciseId) REFERENCES Exercise(exerciseId)
+  FOREIGN KEY (exerciseId) REFERENCES Exercise(exerciseId),
+  PRIMARY KEY (workoutId, exerciseId)
 );
 
 CREATE TABLE ExerciseWithEquipmentInWorkout(
-  workoutId integer NOT NULL PRIMARY KEY,
-  exerciseId integer NOT NULL PRIMARY KEY,
+  workoutId integer NOT NULL,
+  exerciseId integer NOT NULL,
   FOREIGN KEY (workoutId) REFERENCES Workout(workoutId),
-  FOREIGN KEY (exerciseId) REFERENCES ExerciseWithEquipment(exerciseId)
+  FOREIGN KEY (exerciseId) REFERENCES ExerciseWithEquipment(exerciseId),
+  PRIMARY KEY (workoutId, exerciseId)
 );
 
 CREATE TABLE ExerciseInGroup(
-  groupId integer NOT NULL PRIMARY KEY,
-  exerciseId integer NOT NULL PRIMARY KEY,
+  groupId integer NOT NULL,
+  exerciseId integer NOT NULL,
   FOREIGN KEY (groupId) REFERENCES ExerciseGroup(groupId),
-  FOREIGN KEY (exerciseId) REFERENCES Exercise(exerciseId)
+  FOREIGN KEY (exerciseId) REFERENCES Exercise(exerciseId),
+  PRIMARY KEY (groupId, exerciseId)
 );
 
 CREATE TABLE ExerciseWithEquipmentInGroup(
-  groupId integer NOT NULL PRIMARY KEY,
-  exerciseId integer NOT NULL PRIMARY KEY,
+  groupId integer NOT NULL,
+  exerciseId integer NOT NULL,
   FOREIGN KEY (groupId) REFERENCES ExerciseGroup(groupId),
-  FOREIGN KEY (exerciseId) REFERENCES ExerciseWithEquipment(exerciseId)
+  FOREIGN KEY (exerciseId) REFERENCES ExerciseWithEquipment(exerciseId),
+  PRIMARY KEY (groupId, exerciseId)
 );
