@@ -2,8 +2,8 @@ CREATE TABLE Workout(
   workoutId integer NOT NULL PRIMARY KEY,
   performance integer,
   personalShape integer,
-  startTime TIMESTAMP,
-  endTime TIMESTAMP
+  startTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  endTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE Equipment(
