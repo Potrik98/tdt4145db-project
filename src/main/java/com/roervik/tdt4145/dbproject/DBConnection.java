@@ -46,4 +46,8 @@ public class DBConnection {
     public DBConnection(String propertiesFile) throws Exception {
         connection = openConnectionFromProperties(propertiesFile);
     }
+
+    public void closeConnection() throws Exception {
+        connection.close();
+    }
 }
