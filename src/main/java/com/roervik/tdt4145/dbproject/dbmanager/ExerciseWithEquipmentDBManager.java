@@ -56,7 +56,7 @@ public class ExerciseWithEquipmentDBManager extends DBConnection {
                     .build();
             exerciseWithEquipments.add(exerciseWithEquipment);
         }
-        return exerciseWithEquipments;
+        return ExerciseWithEquipment.ordering.immutableSortedCopy(exerciseWithEquipments);
     }
 
     public void createExerciseWithEquipment(final ExerciseWithEquipment exerciseWithEquipment) throws Exception {

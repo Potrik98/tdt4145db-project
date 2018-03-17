@@ -50,7 +50,7 @@ public class ExerciseDBManager extends DBConnection {
                     .build();
             exercises.add(exercise);
         }
-        return exercises;
+        return Exercise.ordering.immutableSortedCopy(exercises);
     }
 
     public void createExercise(final Exercise exercise) throws Exception {
