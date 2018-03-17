@@ -1,10 +1,12 @@
 package com.roervik.tdt4145.dbproject.model;
 
 import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Data
 @Builder(toBuilder = true)
 public class Workout {
     final int workoutId;
