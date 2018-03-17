@@ -5,11 +5,12 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder(toBuilder = true)
 public class Workout {
-    final int workoutId;
+    final UUID workoutId;
     final int performance;
     final int personalShape;
     final LocalDateTime startTime;

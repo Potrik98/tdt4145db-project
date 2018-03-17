@@ -4,7 +4,7 @@ import org.junit.Test;
 public class DBConnectionTest {
     @Test
     public void testOpenDBConnectionAndLoadCreateScript() throws Exception {
-        DBConnection dbConnection = new DBConnection();
+        final DBConnection dbConnection = new DBConnection();
         dbConnection.loadCreateScript();
         dbConnection.closeConnection();
     }
