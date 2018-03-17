@@ -47,6 +47,10 @@ public class DBConnection {
         connection = openConnectionFromProperties(propertiesFile);
     }
 
+    public DBConnection() throws Exception {
+        this(Program.getProperty("dbconnection"));
+    }
+
     public void closeConnection() throws Exception {
         connection.close();
     }
