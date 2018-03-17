@@ -1,4 +1,4 @@
-package com.roervik.tdt4145.dbproject.dbmanager;
+package com.roervik.tdt4145.dbproject.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

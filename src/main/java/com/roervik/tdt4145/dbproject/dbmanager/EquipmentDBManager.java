@@ -2,6 +2,7 @@ package com.roervik.tdt4145.dbproject.dbmanager;
 
 import com.roervik.tdt4145.dbproject.DBConnection;
 import com.roervik.tdt4145.dbproject.model.Equipment;
+import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
 import java.util.Optional;
