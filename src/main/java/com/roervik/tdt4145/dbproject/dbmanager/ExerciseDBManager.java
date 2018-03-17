@@ -53,6 +53,27 @@ public class ExerciseDBManager extends DBConnection {
         return Exercise.ordering.immutableSortedCopy(exercises);
     }
 
+    public List<Exercise> getExercisesInExerciseGroup(final UUID groupId) throws Exception {
+        final String query = "select Exercise.exerciseId, name, description from Exercise" +
+                " join ExerciseInGroup" +
+                " on Exercise.exerciseId = ExerciseInGroup.exerciseId" +
+                " where groupId = :groupId:" +
+                " order by Exercise.exerciseId;";
+        final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
+        statement.setString("groupId", groupId.toString());
+        final ResultSet result = statement.getStatement().executeQuery();
+        final List<Exercise> exercises = new ArrayList<>();
+        while(result.next()) {
+            final Exercise exercise = Exercise.builder()
+                    .exerciseId(UUID.fromString(result.getString("exerciseId")))
+                    .name(result.getString("name"))
+                    .description(result.getString("description"))
+                    .build();
+            exercises.add(exercise);
+        }
+        return Exercise.ordering.immutableSortedCopy(exercises);
+    }
+
     public void createExercise(final Exercise exercise) throws Exception {
         String query = "insert into Exercise (exerciseId, name, description)" +
                 " values (:exerciseId:, :name:, :description:);";

@@ -59,6 +59,29 @@ public class ExerciseWithEquipmentDBManager extends DBConnection {
         return ExerciseWithEquipment.ordering.immutableSortedCopy(exerciseWithEquipments);
     }
 
+    public List<ExerciseWithEquipment> getExerciseWithEquipmentsInExerciseGroup(final UUID groupId) throws Exception {
+        final String query = "select ExerciseWithEquipment.exerciseId, equipmentId, description from ExerciseWithEquipment" +
+                " join ExerciseWithEquipmentInGroup" +
+                " on ExerciseWithEquipment.exerciseId = ExerciseWithEquipmentInGroup.exerciseId" +
+                " where groupId = :groupId:" +
+                " order by ExerciseWithEquipment.exerciseId;";
+        final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
+        statement.setString("groupId", groupId.toString());
+        final ResultSet result = statement.getStatement().executeQuery();
+        final List<ExerciseWithEquipment> exerciseWithEquipments = new ArrayList<>();
+        while(result.next()) {
+            final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
+                    .exerciseId(UUID.fromString(result.getString("exerciseId")))
+                    .description(result.getString("description"))
+                    .equipment(equipmentDBManager.getEquipmentById(
+                            UUID.fromString(result.getString("equipmentId"))
+                    ).get())
+                    .build();
+            exerciseWithEquipments.add(exerciseWithEquipment);
+        }
+        return ExerciseWithEquipment.ordering.immutableSortedCopy(exerciseWithEquipments);
+    }
+
     public void createExerciseWithEquipment(final ExerciseWithEquipment exerciseWithEquipment) throws Exception {
         if (!equipmentDBManager.getEquipmentById(exerciseWithEquipment.getEquipment().getEquipmentId()).isPresent()) {
             equipmentDBManager.createEquipment(exerciseWithEquipment.getEquipment());
