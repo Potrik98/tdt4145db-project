@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.roervik.tdt4145.dbproject.Program.equipmentDBManager;
+
 public class ExerciseWithEquipmentDBManager extends DBConnection {
     public ExerciseWithEquipmentDBManager() throws Exception {
         super();
@@ -27,7 +29,7 @@ public class ExerciseWithEquipmentDBManager extends DBConnection {
         final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
                 .exerciseId(exerciseId)
                 .description(result.getString("description"))
-                .equipment(Program.equipmentDBManager.getEquipmentById(
+                .equipment(equipmentDBManager.getEquipmentById(
                         UUID.fromString(result.getString("equipmentId"))
                 ).get())
                 .build();
@@ -47,7 +49,7 @@ public class ExerciseWithEquipmentDBManager extends DBConnection {
             final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
                     .exerciseId(UUID.fromString(result.getString("exerciseId")))
                     .description(result.getString("description"))
-                    .equipment(Program.equipmentDBManager.getEquipmentById(
+                    .equipment(equipmentDBManager.getEquipmentById(
                             UUID.fromString(result.getString("equipmentId"))
                     ).get())
                     .build();
@@ -57,6 +59,9 @@ public class ExerciseWithEquipmentDBManager extends DBConnection {
     }
 
     public void createExerciseWithEquipment(final ExerciseWithEquipment exerciseWithEquipment) throws Exception {
+        if (!equipmentDBManager.getEquipmentById(exerciseWithEquipment.getEquipment().getEquipmentId()).isPresent()) {
+            equipmentDBManager.createEquipment(exerciseWithEquipment.getEquipment());
+        }
         String query = "insert into ExerciseWithEquipment (exerciseId, equipmentId, description)" +
                 " values (:exerciseId:, :equipmentId:, :description:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);

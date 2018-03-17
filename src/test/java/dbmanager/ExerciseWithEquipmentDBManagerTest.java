@@ -27,6 +27,28 @@ public class ExerciseWithEquipmentDBManagerTest {
     }
 
     @Test
+    public void testCreateAndGetExerciseWithoutExistingEquipment() throws Exception {
+        final Equipment equipment = Equipment.builder()
+                .equipmentId(UUID.randomUUID())
+                .description("MyDescription")
+                .name("EquipmentName")
+                .build();
+
+        final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
+                .exerciseId(UUID.randomUUID())
+                .description("MyDescription")
+                .equipment(equipment)
+                .build();
+        exerciseWithEquipmentDBManager.createExerciseWithEquipment(exerciseWithEquipment);
+
+        final Optional<ExerciseWithEquipment> retrievedExerciseWithEquipment =
+                exerciseWithEquipmentDBManager.getExerciseWithEquipmentById(exerciseWithEquipment.getExerciseId());
+        assertThat(retrievedExerciseWithEquipment).isPresent();
+        assertThat(retrievedExerciseWithEquipment.get())
+                .isEqualToComparingFieldByFieldRecursively(exerciseWithEquipment);
+    }
+
+    @Test
     public void testCreateAndGetExerciseWithEquipment() throws Exception {
         final Equipment equipment = Equipment.builder()
                 .equipmentId(UUID.randomUUID())
