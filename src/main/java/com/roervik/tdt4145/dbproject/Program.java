@@ -5,6 +5,7 @@ import com.roervik.tdt4145.dbproject.dbmanager.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class Program {
     private static Properties programProperties;
@@ -23,7 +24,9 @@ public class Program {
     }
 
     private static void loadProperties() {
-        InputStream input = ClassLoader.getSystemClassLoader().getResourceAsStream("program.properties");
+        System.out.println("Reading program.properties");
+        InputStream input = Program.class.getResourceAsStream("program.properties");
+        System.out.println(input);
         programProperties = new Properties();
         try {
             programProperties.load(input);
@@ -51,5 +54,13 @@ public class Program {
 
     public static void main(String[] args) throws Exception {
         init();
+        exerciseDBManager.loadCreateScript();
+        boolean running = true;
+        Scanner input = new Scanner(System.in);
+        while (running) {
+            String line = input.nextLine();
+            running = !line.contains("q");
+        }
+        closeConnections();
     }
 }

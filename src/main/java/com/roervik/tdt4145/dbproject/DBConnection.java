@@ -13,7 +13,7 @@ public class DBConnection {
     protected final Connection connection;
 
     private static Connection openConnectionFromProperties(String propertiesFile) throws Exception {
-        InputStream input = ClassLoader.getSystemClassLoader().getResourceAsStream(propertiesFile);
+        InputStream input = DBConnection.class.getResourceAsStream(propertiesFile);
         Properties connectionProps = new Properties();
         try {
             connectionProps.load(input);
@@ -28,7 +28,7 @@ public class DBConnection {
     }
 
     public void loadCreateScript() throws Exception {
-        InputStream input = ClassLoader.getSystemClassLoader()
+        InputStream input = DBConnection.class
                 .getResourceAsStream("CreateDatabase.sql");
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
