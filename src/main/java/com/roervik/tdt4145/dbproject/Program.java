@@ -3,6 +3,7 @@ package com.roervik.tdt4145.dbproject;
 import com.roervik.tdt4145.dbproject.dbmanager.EquipmentDBManager;
 import com.roervik.tdt4145.dbproject.dbmanager.ExerciseDBManager;
 import com.roervik.tdt4145.dbproject.dbmanager.ExerciseWithEquipmentDBManager;
+import com.roervik.tdt4145.dbproject.dbmanager.WorkoutDBManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +15,7 @@ public class Program {
     public static ExerciseDBManager exerciseDBManager;
     public static ExerciseWithEquipmentDBManager exerciseWithEquipmentDBManager;
     public static EquipmentDBManager equipmentDBManager;
+    public static WorkoutDBManager workoutDBManager;
 
     public static String getProperty(final String propertyName) {
         if (programProperties == null) {
@@ -37,12 +39,14 @@ public class Program {
         exerciseDBManager = new ExerciseDBManager();
         exerciseWithEquipmentDBManager = new ExerciseWithEquipmentDBManager();
         equipmentDBManager = new EquipmentDBManager();
+        workoutDBManager = new WorkoutDBManager();
     }
 
     public static void closeConnections() throws Exception {
         exerciseDBManager.closeConnection();
         exerciseWithEquipmentDBManager.closeConnection();
         equipmentDBManager.closeConnection();
+        workoutDBManager.closeConnection();
     }
 
     public static void main(String[] args) throws Exception {

@@ -37,10 +37,11 @@ public class ExerciseWithEquipmentDBManager extends DBConnection {
     }
 
     public List<ExerciseWithEquipment> getExerciseWithEquipmentsInWorkout(final UUID workoutId) throws Exception {
-        final String query = "select exerciseId, equipmentId, description from ExerciseWithEquipment" +
+        final String query = "select ExerciseWithEquipment.exerciseId, equipmentId, description from ExerciseWithEquipment" +
                 " join ExerciseWithEquipmentInWorkout" +
                 " on ExerciseWithEquipment.exerciseId = ExerciseWithEquipmentInWorkout.exerciseId" +
-                " where workoutId = :workoutId:";
+                " where workoutId = :workoutId:" +
+                " order by ExerciseWithEquipment.exerciseId;";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("workoutId", workoutId.toString());
         final ResultSet result = statement.getStatement().executeQuery();
