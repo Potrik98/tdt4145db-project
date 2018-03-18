@@ -19,8 +19,8 @@ public class Workout {
 
     @Builder.Default
     final UUID workoutId = UUID.randomUUID();
-    final int performance;
-    final int personalShape;
+    final Integer performance;
+    final Integer personalShape;
     final LocalDateTime startTime;
     final LocalDateTime endTime;
     final List<Exercise> exercises;
