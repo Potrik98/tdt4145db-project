@@ -47,15 +47,15 @@ public class Client {
                                                     UUID.fromString(arguments.get("id"))
                                             )
                                     : ((List<?>) relationDBManagers.get(arguments.get("in")).getAll()).stream()
-                                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("startTime")
+                                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("after")
                                                     || Objects.isNull(obj.getClass().getMethod("getStartTime"))
-                                                    || LocalDateTime.parse(arguments.get("startTime"))
+                                                    || LocalDateTime.parse(arguments.get("after"))
                                                             .isBefore((LocalDateTime) obj.getClass()
                                                                     .getMethod("getStartTime").invoke(obj))
                                             ))
-                                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("endTime")
+                                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("before")
                                                     || Objects.isNull(obj.getClass().getMethod("getEndTime"))
-                                                    || LocalDateTime.parse(arguments.get("endTime"))
+                                                    || LocalDateTime.parse(arguments.get("before"))
                                                             .isAfter((LocalDateTime) obj.getClass()
                                                                     .getMethod("getEndTime").invoke(obj))
                                             ))
@@ -113,12 +113,12 @@ public class Client {
                                     Function.identity(),
                                     ex -> uncheckCall(() -> WorkoutResult.ofWorkouts(
                                                     workoutDBManager.getAll().stream()
-                                                    .filter(workout -> !arguments.containsKey("startTime")
-                                                            || LocalDateTime.parse(arguments.get("startTime"))
+                                                    .filter(workout -> !arguments.containsKey("after")
+                                                            || LocalDateTime.parse(arguments.get("after"))
                                                                     .isBefore(workout.getStartTime())
                                                     )
-                                                    .filter(workout -> !arguments.containsKey("endTime")
-                                                            || LocalDateTime.parse(arguments.get("endTime"))
+                                                    .filter(workout -> !arguments.containsKey("before")
+                                                            || LocalDateTime.parse(arguments.get("before"))
                                                                     .isAfter(workout.getEndTime())
                                                     )
                                                     .filter(workout -> uncheckCall(() ->
@@ -172,9 +172,13 @@ public class Client {
             if (line.startsWith("exit") || line.startsWith("quit")) {
                 break;
             }
-            final String[] lineArgs = line.split(" ");
-            final Map<String, String> arguments = parseArguments(lineArgs);
-            actions.get(lineArgs[0]).accept(arguments);
+            try {
+                final String[] lineArgs = line.split(" ");
+                final Map<String, String> arguments = parseArguments(lineArgs);
+                actions.get(lineArgs[0]).accept(arguments);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         Program.closeConnections();
         System.out.println("Shutting down...");
