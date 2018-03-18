@@ -1,0 +1,29 @@
+{
+  "performance":"8",
+  "personalShape":"7",
+  "note":"This workout was interesting",
+  "startTime":"2018-01-01T13:15:00",
+  "endTime":"2018-01-01T14:15:00",
+  "exercises":
+  [
+    {
+      "name":"Exercise1",
+      "description":"Do A"
+    },
+    {
+      "name":"Exercise2",
+      "description":"Do B"
+    }
+  ],
+  "exerciseWithEquipments":
+  [
+    {
+      "description":"Use the equipment and do C",
+      "equipment":
+      {
+        "name":"TheMachineMachine",
+        "description":"This is how you use this equipment"
+      }
+    }
+  ]
+}
