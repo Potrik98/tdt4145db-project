@@ -48,35 +48,27 @@ public class Client {
 
     private static final Consumer<Map<String, String>> listRelatedAction = arguments ->
             uncheckRun(() -> writeForEach(
-                    ((List<?>) (arguments.containsKey("id")
-                                    ? relationDBManagers.get(arguments.get("in")).getClass()
-                                            .getMethod("getRelated" + arguments.get("object") + "s", UUID.class)
-                                            .invoke(relationDBManagers.get(arguments.get("in")),
-                                                    UUID.fromString(arguments.get("id"))
-                                            )
-                                    : ((List<?>) relationDBManagers.get(arguments.get("in")).getAll()).stream()
-                                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("after")
-                                                    || Objects.isNull(obj.getClass().getMethod("getStartTime"))
-                                                    || LocalDateTime.parse(arguments.get("after"))
-                                                            .isBefore((LocalDateTime) obj.getClass()
-                                                                    .getMethod("getStartTime").invoke(obj))
-                                            ))
-                                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("before")
-                                                    || Objects.isNull(obj.getClass().getMethod("getEndTime"))
-                                                    || LocalDateTime.parse(arguments.get("before"))
-                                                            .isAfter((LocalDateTime) obj.getClass()
-                                                                    .getMethod("getEndTime").invoke(obj))
-                                            ))
-                                            .map(obj -> uncheckCall(() -> (List<?>) obj.getClass()
-                                                    .getMethod("get" + arguments.get("object") + "s")
-                                                    .invoke(obj)
-                                            ))
-                                            .flatMap(List::stream)
-                                            .distinct()
-                                            .collect(Collectors.toList())
-                            )
-                    )
-                    .stream(),
+                    ((List<?>) relationDBManagers.get(arguments.get("object")).getAll()).stream()
+                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("id")
+                                    || ((List<?>) obj.getClass().getMethod("get" + arguments.get("of") + "s")
+                                            .invoke(obj))
+                                    .stream().anyMatch(o -> uncheckCall(() ->
+                                            o.getClass().getMethod("getExerciseId").invoke(o)
+                                                    .equals(UUID.fromString(arguments.get("id")))
+                                    ))
+                            ))
+                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("after")
+                                    || Objects.isNull(obj.getClass().getMethod("getStartTime"))
+                                    || LocalDateTime.parse(arguments.get("after"))
+                                            .isBefore((LocalDateTime) obj.getClass()
+                                                    .getMethod("getStartTime").invoke(obj))
+                            ))
+                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("before")
+                                    || Objects.isNull(obj.getClass().getMethod("getEndTime"))
+                                    || LocalDateTime.parse(arguments.get("before"))
+                                            .isAfter((LocalDateTime) obj.getClass()
+                                                    .getMethod("getEndTime").invoke(obj))
+                            )),
                     o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
                     arguments
             ));
