@@ -7,10 +7,7 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class DBManager<T> {
     protected final Connection connection;
@@ -30,10 +27,18 @@ public abstract class DBManager<T> {
             e.printStackTrace();
         }
         Class.forName(connectionProps.getProperty("driver")).newInstance();
-        System.out.println("Opening db connection to " + connectionProps.getProperty("dbname"));
-        return DriverManager.getConnection(
+        Connection connection = DriverManager.getConnection(
                 connectionProps.getProperty("dbname"),
                 connectionProps);
+        if (Objects.isNull(connection.getCatalog())
+                || connection.getCatalog().isEmpty()) {
+            connection.setCatalog(connectionProps.getProperty("catalog"));
+        }
+        if (Objects.isNull(connection.getSchema())
+                || connection.getSchema().isEmpty()) {
+            connection.setSchema(connectionProps.getProperty("schema"));
+        }
+        return connection;
     }
 
     public void loadCreateScript() throws Exception {

@@ -52,7 +52,13 @@ public class Program {
 
     public static void main(String[] args) throws Exception {
         init();
-        exerciseDBManager.loadCreateScript();
+        try {
+            exerciseDBManager.loadCreateScript();
+        } catch (Exception e) {
+            e.printStackTrace();
+            closeConnections();
+            return;
+        }
         boolean running = true;
         Scanner input = new Scanner(System.in);
         while (running) {
