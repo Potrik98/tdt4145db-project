@@ -1,6 +1,5 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
-import com.roervik.tdt4145.dbproject.DBManager;
 import com.roervik.tdt4145.dbproject.Program;
 import com.roervik.tdt4145.dbproject.model.Workout;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
@@ -16,7 +15,7 @@ import static com.roervik.tdt4145.dbproject.Program.exerciseWithEquipmentDBManag
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckCall;
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckRun;
 
-public class WorkoutDBManager extends DBManager<Workout> {
+public class WorkoutDBManager extends DBManagerWithRelation<Workout> {
     public WorkoutDBManager() throws Exception {
         super();
     }
@@ -67,7 +66,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
         return Workout.ordering.immutableSortedCopy(workouts);
     }
 
-    public void addExerciseToWorkout(final UUID exerciseId, final UUID workoutId) throws Exception {
+    public void addExercise(final UUID exerciseId, final UUID workoutId) throws Exception {
         String query = "insert into ExerciseInWorkout (workoutId, exerciseId)" +
                 " values(:workoutId:, :exerciseId:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -76,7 +75,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
         statement.getStatement().executeUpdate();
     }
 
-    public void addExerciseWithEquipmentToWorkout(final UUID exerciseId, final UUID workoutId) throws Exception {
+    public void addExerciseWithEquipment(final UUID exerciseId, final UUID workoutId) throws Exception {
         String query = "insert into ExerciseWithEquipmentInWorkout (workoutId, exerciseId)" +
                 " values(:workoutId:, :exerciseId:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -109,8 +108,8 @@ public class WorkoutDBManager extends DBManager<Workout> {
                         .create(exercise)));
 
         workout.getExercises().forEach(exercise -> uncheckRun(() ->
-                addExerciseToWorkout(exercise.getExerciseId(), workout.getWorkoutId())));
+                addExercise(exercise.getExerciseId(), workout.getWorkoutId())));
         workout.getExerciseWithEquipments().forEach(exercise -> uncheckRun(() ->
-                addExerciseWithEquipmentToWorkout(exercise.getExerciseId(), workout.getWorkoutId())));
+                addExerciseWithEquipment(exercise.getExerciseId(), workout.getWorkoutId())));
     }
 }

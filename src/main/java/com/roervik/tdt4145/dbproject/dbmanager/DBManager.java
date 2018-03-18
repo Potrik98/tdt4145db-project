@@ -1,4 +1,6 @@
-package com.roervik.tdt4145.dbproject;
+package com.roervik.tdt4145.dbproject.dbmanager;
+
+import com.roervik.tdt4145.dbproject.Program;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,9 +14,9 @@ import java.util.*;
 public abstract class DBManager<T> {
     protected final Connection connection;
 
-    public abstract Optional<T> getById(UUID objectId) throws Exception;
+    public abstract Optional<T> getById(final UUID objectId) throws Exception;
 
-    public abstract void create(T object) throws Exception;
+    public abstract void create(final T object) throws Exception;
 
     public abstract List<T> getAll() throws Exception;
 

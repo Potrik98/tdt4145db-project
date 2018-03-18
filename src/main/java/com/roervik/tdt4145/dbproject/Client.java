@@ -2,6 +2,7 @@ package com.roervik.tdt4145.dbproject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.roervik.tdt4145.dbproject.dbmanager.DBManager;
 import com.roervik.tdt4145.dbproject.model.WorkoutResult;
 
 import java.io.File;

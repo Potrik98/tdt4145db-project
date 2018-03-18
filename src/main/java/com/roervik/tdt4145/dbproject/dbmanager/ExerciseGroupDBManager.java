@@ -1,6 +1,5 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
-import com.roervik.tdt4145.dbproject.DBManager;
 import com.roervik.tdt4145.dbproject.model.ExerciseGroup;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
@@ -15,7 +14,7 @@ import static com.roervik.tdt4145.dbproject.Program.exerciseWithEquipmentDBManag
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckCall;
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckRun;
 
-public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
+public class ExerciseGroupDBManager extends DBManagerWithRelation<ExerciseGroup> {
     public ExerciseGroupDBManager() throws Exception {
         super();
     }
@@ -58,7 +57,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
         return ExerciseGroup.ordering.immutableSortedCopy(exerciseGroups);
     }
 
-    public void addExerciseToExerciseGroup(final UUID exerciseId, final UUID groupId) throws Exception {
+    public void addExercise(final UUID exerciseId, final UUID groupId) throws Exception {
         String query = "insert into ExerciseInGroup (groupId, exerciseId)" +
                 " values(:groupId:, :exerciseId:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -67,7 +66,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
         statement.getStatement().executeUpdate();
     }
 
-    public void addExerciseWithEquipmentToExerciseGroup(final UUID exerciseId, final UUID groupId) throws Exception {
+    public void addExerciseWithEquipment(final UUID exerciseId, final UUID groupId) throws Exception {
         String query = "insert into ExerciseWithEquipmentInGroup (groupId, exerciseId)" +
                 " values(:groupId:, :exerciseId:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -95,8 +94,8 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
                         .create(exercise)));
 
         exerciseGroup.getExercises().forEach(exercise -> uncheckRun(() ->
-                addExerciseToExerciseGroup(exercise.getExerciseId(), exerciseGroup.getGroupId())));
+                addExercise(exercise.getExerciseId(), exerciseGroup.getGroupId())));
         exerciseGroup.getExerciseWithEquipments().forEach(exercise -> uncheckRun(() ->
-                addExerciseWithEquipmentToExerciseGroup(exercise.getExerciseId(), exerciseGroup.getGroupId())));
+                addExerciseWithEquipment(exercise.getExerciseId(), exerciseGroup.getGroupId())));
     }
 }
