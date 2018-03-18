@@ -90,6 +90,16 @@ public class Client {
                     arguments
             ));
 
+    private static final Consumer<Map<String, String>> getAction = arguments ->
+            uncheckRun(() -> writeForEach(
+                    Stream.of(dbManagers.get(arguments.get("object"))
+                            .getById(UUID.fromString(arguments.get("id")))
+                            .get()
+                    ),
+                    o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
+                    arguments
+            ));
+
     private static final Consumer<Map<String, String>> createListAction = arguments ->
             uncheckRun(() ->
                     ((List<?>) mapper.readValue(
@@ -157,6 +167,7 @@ public class Client {
     private static final Map<String, Consumer<Map<String, String>>> actions =
             ImmutableMap.<String, Consumer<Map<String, String>>>builder()
                     .put("list", listAction)
+                    .put("get", getAction)
                     .put("create", createAction)
                     .put("createList", createListAction)
                     .put("listRelated", listRelatedAction)
