@@ -36,6 +36,20 @@ public class Client {
                     arguments
             ));
 
+    private static final Consumer<Map<String, String>> createListAction = arguments ->
+            uncheckRun(() ->
+                    ((List) mapper.readValue(
+                            readFile(arguments.get("input")),
+                            mapper.getTypeFactory().constructCollectionType(
+                                    List.class,
+                                    Class.forName("com.roervik.tdt4145.dbproject.model." + arguments.get("object"))
+                            )
+                    ))
+                    .forEach(obj -> uncheckRun(() ->
+                            dbManagers.get(arguments.get("object")).create(obj)
+                    ))
+            );
+
     private static final Consumer<Map<String, String>> createAction = arguments ->
             uncheckRun(() -> dbManagers.get(arguments.get("object")).create(
                     mapper.readValue(readFile(arguments.get("input")),
@@ -44,11 +58,10 @@ public class Client {
     private static final Consumer<Map<String, String>> resultsAction = arguments ->
             uncheckRun(() -> writeForEach(
                     ((Map<?, WorkoutResult>)
-                            (
-                                    arguments.containsKey("id")
-                                            ? Stream.of(dbManagers.get(arguments.get("object"))
-                                                    .getById(UUID.fromString(arguments.get("id"))))
-                                            : dbManagers.get(arguments.get("object")).getAll().stream()
+                            (arguments.containsKey("id")
+                                    ? Stream.of(dbManagers.get(arguments.get("object"))
+                                            .getById(UUID.fromString(arguments.get("id"))))
+                                    : dbManagers.get(arguments.get("object")).getAll().stream()
                             )
                             .collect(Collectors.toMap(
                                     Function.identity(),
@@ -65,11 +78,12 @@ public class Client {
                                                             : true
                                                     )
                                                     .filter(workout -> uncheckCall(() ->
-                                                            (
-                                                                    (List) workout.getClass()
+                                                            ((List)
+                                                                    workout.getClass()
                                                                             .getMethod("get" + arguments.get("object") + "s")
                                                                             .invoke(workout)
-                                                            ).stream()
+                                                            )
+                                                            .stream()
                                                             .map(o -> uncheckCall(() ->
                                                                     (UUID) o.getClass().getMethod("getExerciseId").invoke(o)))
                                                             .anyMatch(id -> id.equals(uncheckCall(() ->
@@ -80,7 +94,8 @@ public class Client {
                                             )
                                     )
                             ))
-                    ).entrySet().stream(),
+                    )
+                    .entrySet().stream(),
                     o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
                     arguments
             ));
@@ -89,6 +104,7 @@ public class Client {
             ImmutableMap.of(
                     "list", listAction,
                     "create", createAction,
+                    "createList", createListAction,
                     "results", resultsAction);
 
     public static void main(String[] args) throws Exception {
