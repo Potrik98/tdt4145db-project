@@ -56,7 +56,7 @@ public class ExerciseGroupDBManagerTest {
                 .name("GroupName")
                 .exercises(Exercise.ordering.immutableSortedCopy(
                         ImmutableList.of(createdExercise, notCreatedExercise)))
-                .exercisesWithEquipment(ExerciseWithEquipment.ordering.immutableSortedCopy(
+                .exerciseWithEquipments(ExerciseWithEquipment.ordering.immutableSortedCopy(
                         ImmutableList.of(createdExerciseWithEquiment, notCreatedExerciseWithEquipment)))
                 .build();
         exerciseGroupDBManager.create(exerciseGroup);

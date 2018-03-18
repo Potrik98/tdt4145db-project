@@ -31,13 +31,12 @@ public class WorkoutDBManager extends DBManager<Workout> {
             return Optional.empty();
         }
         final Workout workout = Workout.builder()
-                .workoutId(workoutId)
                 .performance(result.getInt("performance"))
                 .personalShape(result.getInt("personalShape"))
                 .startTime(result.getTimestamp("startTime").toLocalDateTime())
                 .endTime(result.getTimestamp("endTime").toLocalDateTime())
                 .exercises(exerciseDBManager.getExercisesInWorkout(workoutId))
-                .exercisesWithEquipment(Program.exerciseWithEquipmentDBManager
+                .exerciseWithEquipments(Program.exerciseWithEquipmentDBManager
                         .getExerciseWithEquipmentsInWorkout(workoutId))
                 .build();
         return Optional.of(workout);
@@ -51,13 +50,12 @@ public class WorkoutDBManager extends DBManager<Workout> {
         while(result.next()) {
             UUID workoutId = UUID.fromString(result.getString("workoutId"));
             final Workout workout = Workout.builder()
-                    .workoutId(workoutId)
                     .performance(result.getInt("performance"))
                     .personalShape(result.getInt("personalShape"))
                     .startTime(result.getTimestamp("startTime").toLocalDateTime())
                     .endTime(result.getTimestamp("endTime").toLocalDateTime())
                     .exercises(exerciseDBManager.getExercisesInWorkout(workoutId))
-                    .exercisesWithEquipment(Program.exerciseWithEquipmentDBManager
+                    .exerciseWithEquipments(Program.exerciseWithEquipmentDBManager
                             .getExerciseWithEquipmentsInWorkout(workoutId))
                     .build();
             workouts.add(workout);

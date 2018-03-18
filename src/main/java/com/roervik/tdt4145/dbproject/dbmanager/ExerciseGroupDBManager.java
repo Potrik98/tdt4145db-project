@@ -33,7 +33,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
                 .groupId(groupId)
                 .name(result.getString("groupName"))
                 .exercises(exerciseDBManager.getExercisesInExerciseGroup(groupId))
-                .exercisesWithEquipment(exerciseWithEquipmentDBManager
+                .exerciseWithEquipments(exerciseWithEquipmentDBManager
                         .getExerciseWithEquipmentsInExerciseGroup(groupId))
                 .build();
         return Optional.of(exerciseGroup);
@@ -50,7 +50,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
                     .groupId(groupId)
                     .name(result.getString("groupName"))
                     .exercises(exerciseDBManager.getExercisesInExerciseGroup(groupId))
-                    .exercisesWithEquipment(exerciseWithEquipmentDBManager
+                    .exerciseWithEquipments(exerciseWithEquipmentDBManager
                             .getExerciseWithEquipmentsInExerciseGroup(groupId))
                     .build();
             exerciseGroups.add(exerciseGroup);
@@ -87,7 +87,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
                 .filter(exercise -> uncheckCall(() ->
                         !exerciseDBManager.getById(exercise.getExerciseId()).isPresent()))
                 .forEach(exercise -> uncheckRun(() -> exerciseDBManager.create(exercise)));
-        exerciseGroup.getExercisesWithEquipment().stream()
+        exerciseGroup.getexerciseWithEquipments().stream()
                 .filter(exercise -> uncheckCall(() ->
                         !exerciseWithEquipmentDBManager
                                 .getById(exercise.getExerciseId()).isPresent()))
@@ -96,7 +96,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
 
         exerciseGroup.getExercises().forEach(exercise -> uncheckRun(() ->
                 addExerciseToExerciseGroup(exercise.getExerciseId(), exerciseGroup.getGroupId())));
-        exerciseGroup.getExercisesWithEquipment().forEach(exercise -> uncheckRun(() ->
+        exerciseGroup.getexerciseWithEquipments().forEach(exercise -> uncheckRun(() ->
                 addExerciseWithEquipmentToExerciseGroup(exercise.getExerciseId(), exerciseGroup.getGroupId())));
     }
 }

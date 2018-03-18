@@ -21,7 +21,7 @@ public class ExerciseGroup {
     final UUID groupId = UUID.randomUUID();
     final String name;
     final List<Exercise> exercises;
-    final List<ExerciseWithEquipment> exercisesWithEquipment;
+    final List<ExerciseWithEquipment> exerciseWithEquipments;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class ExerciseGroupBuilder {
