@@ -28,7 +28,6 @@ public class EquipmentDBManagerTest {
     @Test
     public void testCreateAndGetEquipment() throws Exception {
         final Equipment equipment = Equipment.builder()
-                .equipmentId(UUID.randomUUID())
                 .description("MyDescription")
                 .name("EquipmentName")
                 .build();

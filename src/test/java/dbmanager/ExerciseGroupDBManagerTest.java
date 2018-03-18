@@ -31,34 +31,28 @@ public class ExerciseGroupDBManagerTest {
     @Test
     public void testCreateAndGetExerciseGroupWithExercises() throws Exception {
         final Equipment equipment = Equipment.builder()
-                .equipmentId(UUID.randomUUID())
                 .description("MyDescription")
                 .name("EquipmentName")
                 .build();
         final ExerciseWithEquipment createdExerciseWithEquiment = ExerciseWithEquipment.builder()
-                .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
                 .equipment(equipment)
                 .build();
         exerciseWithEquipmentDBManager.create(createdExerciseWithEquiment);
         final ExerciseWithEquipment notCreatedExerciseWithEquipment = ExerciseWithEquipment.builder()
-                .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
                 .equipment(equipment)
                 .build();
         final Exercise createdExercise = Exercise.builder()
-                .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
                 .name("ExerciseName")
                 .build();
         exerciseDBManager.create(createdExercise);
         final Exercise notCreatedExercise = Exercise.builder()
-                .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
                 .name("ExerciseName")
                 .build();
         final ExerciseGroup exerciseGroup = ExerciseGroup.builder()
-                .groupId(UUID.randomUUID())
                 .name("GroupName")
                 .exercises(Exercise.ordering.immutableSortedCopy(
                         ImmutableList.of(createdExercise, notCreatedExercise)))

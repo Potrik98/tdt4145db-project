@@ -28,7 +28,6 @@ public class ExerciseDBManagerTest {
     @Test
     public void testCreateAndGetExercise() throws Exception {
         final Exercise exercise = Exercise.builder()
-                .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
                 .name("ExerciseName")
                 .build();

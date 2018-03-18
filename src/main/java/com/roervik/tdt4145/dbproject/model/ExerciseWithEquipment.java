@@ -12,7 +12,8 @@ import java.util.UUID;
 public class ExerciseWithEquipment {
     public static final Ordering<ExerciseWithEquipment> ordering = Ordering.from(Comparator.comparing(ExerciseWithEquipment::getExerciseId));
 
-    final UUID exerciseId;
+    @Builder.Default
+    final UUID exerciseId = UUID.randomUUID();
     final String description;
     final Equipment equipment;
 }

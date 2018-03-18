@@ -14,7 +14,8 @@ import java.util.UUID;
 public class Workout {
     public static final Ordering<Workout> ordering = Ordering.from(Comparator.comparing(Workout::getEndTime));
 
-    final UUID workoutId;
+    @Builder.Default
+    final UUID workoutId = UUID.randomUUID();
     final int performance;
     final int personalShape;
     final LocalDateTime startTime;

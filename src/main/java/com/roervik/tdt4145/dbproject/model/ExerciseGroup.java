@@ -13,7 +13,8 @@ import java.util.UUID;
 public class ExerciseGroup {
     public static final Ordering<ExerciseGroup> ordering = Ordering.from(Comparator.comparing(ExerciseGroup::getGroupId));
 
-    final UUID groupId;
+    @Builder.Default
+    final UUID groupId = UUID.randomUUID();
     final String name;
     final List<Exercise> exercises;
     final List<ExerciseWithEquipment> exercisesWithEquipment;
