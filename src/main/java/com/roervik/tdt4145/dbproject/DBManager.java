@@ -42,19 +42,23 @@ public abstract class DBManager<T> {
     }
 
     public void loadCreateScript() throws Exception {
-        InputStream input = DBManager.class
-                .getResourceAsStream("CreateDatabase.sql");
+        try {
+            InputStream input = DBManager.class
+                    .getResourceAsStream("CreateDatabase.sql");
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        StringBuilder out = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            out.append(line);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+            StringBuilder out = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                out.append(line);
+            }
+
+            System.out.println("Running create script");
+            Statement statement = connection.createStatement();
+            statement.execute(out.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        System.out.println("Running create script");
-        Statement statement = connection.createStatement();
-        statement.execute(out.toString());
     }
 
     private DBManager(String propertiesFile) throws Exception {

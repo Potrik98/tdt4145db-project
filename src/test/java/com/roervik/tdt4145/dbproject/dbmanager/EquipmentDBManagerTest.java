@@ -1,5 +1,6 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
+import com.roervik.tdt4145.dbproject.Program;
 import com.roervik.tdt4145.dbproject.model.Equipment;
 import org.junit.After;
 import org.junit.Before;
@@ -8,20 +9,19 @@ import org.junit.Test;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.roervik.tdt4145.dbproject.Program.equipmentDBManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class EquipmentDBManagerTest {
-    private EquipmentDBManager equipmentDBManager;
-
     @Before
     public void openDBManager() throws Exception {
-        equipmentDBManager = new EquipmentDBManager();
+        Program.init();
         equipmentDBManager.loadCreateScript();
     }
 
     @After
     public void closeDBManager() throws Exception {
-        equipmentDBManager.closeConnection();
+        Program.closeConnections();
     }
 
     @Test

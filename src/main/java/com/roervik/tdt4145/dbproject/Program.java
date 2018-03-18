@@ -48,6 +48,11 @@ public class Program {
         equipmentDBManager.closeConnection();
         workoutDBManager.closeConnection();
         exerciseGroupDBManager.closeConnection();
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws Exception {
