@@ -10,7 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,7 +40,7 @@ public class ExerciseGroupDBManagerTest {
                 .description("MyDescription")
                 .equipment(equipment)
                 .build();
-        exerciseWithEquipmentDBManager.createExerciseWithEquipment(createdExerciseWithEquiment);
+        exerciseWithEquipmentDBManager.create(createdExerciseWithEquiment);
         final ExerciseWithEquipment notCreatedExerciseWithEquipment = ExerciseWithEquipment.builder()
                 .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
@@ -52,7 +51,7 @@ public class ExerciseGroupDBManagerTest {
                 .description("MyDescription")
                 .name("ExerciseName")
                 .build();
-        exerciseDBManager.createExercise(createdExercise);
+        exerciseDBManager.create(createdExercise);
         final Exercise notCreatedExercise = Exercise.builder()
                 .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
@@ -66,10 +65,10 @@ public class ExerciseGroupDBManagerTest {
                 .exercisesWithEquipment(ExerciseWithEquipment.ordering.immutableSortedCopy(
                         ImmutableList.of(createdExerciseWithEquiment, notCreatedExerciseWithEquipment)))
                 .build();
-        exerciseGroupDBManager.createExerciseGroup(exerciseGroup);
+        exerciseGroupDBManager.create(exerciseGroup);
 
         final Optional<ExerciseGroup> retrievedExerciseGroup =
-                exerciseGroupDBManager.getExerciseGroupById(exerciseGroup.getGroupId());
+                exerciseGroupDBManager.getById(exerciseGroup.getGroupId());
         assertThat(retrievedExerciseGroup).isPresent();
         assertThat(retrievedExerciseGroup.get()).isEqualToComparingFieldByFieldRecursively(exerciseGroup);
     }
@@ -78,7 +77,7 @@ public class ExerciseGroupDBManagerTest {
     public void testGetExerciseGroupWithInvalidId() throws Exception {
         final UUID invalidId = UUID.randomUUID();
         final Optional<ExerciseGroup> retrievedExerciseGroup =
-                exerciseGroupDBManager.getExerciseGroupById(invalidId);
+                exerciseGroupDBManager.getById(invalidId);
         assertThat(retrievedExerciseGroup).isEmpty();
     }
 }

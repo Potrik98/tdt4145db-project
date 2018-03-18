@@ -41,7 +41,7 @@ public class WorkoutDBManagerTest {
                 .description("MyDescription")
                 .equipment(equipment)
                 .build();
-        exerciseWithEquipmentDBManager.createExerciseWithEquipment(createdExerciseWithEquiment);
+        exerciseWithEquipmentDBManager.create(createdExerciseWithEquiment);
         final ExerciseWithEquipment notCreatedExerciseWithEquipment = ExerciseWithEquipment.builder()
                 .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
@@ -52,7 +52,7 @@ public class WorkoutDBManagerTest {
                 .description("MyDescription")
                 .name("ExerciseName")
                 .build();
-        exerciseDBManager.createExercise(createdExercise);
+        exerciseDBManager.create(createdExercise);
         final Exercise notCreatedExercise = Exercise.builder()
                 .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
@@ -69,10 +69,10 @@ public class WorkoutDBManagerTest {
                 .exercisesWithEquipment(ExerciseWithEquipment.ordering.immutableSortedCopy(
                         ImmutableList.of(createdExerciseWithEquiment, notCreatedExerciseWithEquipment)))
                 .build();
-        workoutDBManager.createWorkout(workout);
+        workoutDBManager.create(workout);
 
         final Optional<Workout> retrievedWorkout =
-                workoutDBManager.getWorkoutById(workout.getWorkoutId());
+                workoutDBManager.getById(workout.getWorkoutId());
         assertThat(retrievedWorkout).isPresent();
         assertThat(retrievedWorkout.get()).isEqualToComparingFieldByFieldRecursively(workout);
     }
@@ -81,7 +81,7 @@ public class WorkoutDBManagerTest {
     public void testGetWorkoutWithInvalidId() throws Exception {
         final UUID invalidId = UUID.randomUUID();
         final Optional<Workout> retrievedWorkout =
-                workoutDBManager.getWorkoutById(invalidId);
+                workoutDBManager.getById(invalidId);
         assertThat(retrievedWorkout).isEmpty();
     }
 }

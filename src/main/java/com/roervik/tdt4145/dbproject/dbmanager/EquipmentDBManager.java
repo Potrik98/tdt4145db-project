@@ -1,8 +1,7 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
-import com.roervik.tdt4145.dbproject.DBConnection;
+import com.roervik.tdt4145.dbproject.DBManager;
 import com.roervik.tdt4145.dbproject.model.Equipment;
-import com.roervik.tdt4145.dbproject.util.GetAll;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class EquipmentDBManager extends DBConnection implements GetAll<Equipment> {
+public class EquipmentDBManager extends DBManager<Equipment> {
     public EquipmentDBManager() throws Exception {
         super();
     }
@@ -32,7 +31,7 @@ public class EquipmentDBManager extends DBConnection implements GetAll<Equipment
         return Equipment.ordering.immutableSortedCopy(equipments);
     }
 
-    public Optional<Equipment> getEquipmentById(final UUID equipmentId) throws Exception {
+    public Optional<Equipment> getById(final UUID equipmentId) throws Exception {
         final String query = "select name, description from Equipment" +
                 " where equipmentId = :equipmentId:";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -49,7 +48,7 @@ public class EquipmentDBManager extends DBConnection implements GetAll<Equipment
         return Optional.of(equipment);
     }
 
-    public void createEquipment(final Equipment equipment) throws Exception {
+    public void create(final Equipment equipment) throws Exception {
         String query = "insert into Equipment (equipmentId, name, description)" +
                 " values (:equipmentId:, :name:, :description:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);

@@ -1,8 +1,7 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
-import com.roervik.tdt4145.dbproject.DBConnection;
+import com.roervik.tdt4145.dbproject.DBManager;
 import com.roervik.tdt4145.dbproject.model.ExerciseGroup;
-import com.roervik.tdt4145.dbproject.util.GetAll;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
@@ -16,12 +15,12 @@ import static com.roervik.tdt4145.dbproject.Program.exerciseWithEquipmentDBManag
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckCall;
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckRun;
 
-public class ExerciseGroupDBManager extends DBConnection implements GetAll<ExerciseGroup> {
+public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
     public ExerciseGroupDBManager() throws Exception {
         super();
     }
 
-    public Optional<ExerciseGroup> getExerciseGroupById(final UUID groupId) throws Exception {
+    public Optional<ExerciseGroup> getById(final UUID groupId) throws Exception {
         final String query = "select name from ExerciseGroup" +
                 " where groupId = :groupId:";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -77,7 +76,7 @@ public class ExerciseGroupDBManager extends DBConnection implements GetAll<Exerc
         statement.getStatement().executeUpdate();
     }
 
-    public void createExerciseGroup(final ExerciseGroup exerciseGroup) throws Exception {
+    public void create(final ExerciseGroup exerciseGroup) throws Exception {
         String query = "insert into ExerciseGroup (groupId, name)" +
                 " values (:groupId:, :name:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -86,14 +85,14 @@ public class ExerciseGroupDBManager extends DBConnection implements GetAll<Exerc
         statement.getStatement().executeUpdate();
         exerciseGroup.getExercises().stream()
                 .filter(exercise -> uncheckCall(() ->
-                        !exerciseDBManager.getExerciseById(exercise.getExerciseId()).isPresent()))
-                .forEach(exercise -> uncheckRun(() -> exerciseDBManager.createExercise(exercise)));
+                        !exerciseDBManager.getById(exercise.getExerciseId()).isPresent()))
+                .forEach(exercise -> uncheckRun(() -> exerciseDBManager.create(exercise)));
         exerciseGroup.getExercisesWithEquipment().stream()
                 .filter(exercise -> uncheckCall(() ->
                         !exerciseWithEquipmentDBManager
-                                .getExerciseWithEquipmentById(exercise.getExerciseId()).isPresent()))
+                                .getById(exercise.getExerciseId()).isPresent()))
                 .forEach(exercise -> uncheckRun(() -> exerciseWithEquipmentDBManager
-                        .createExerciseWithEquipment(exercise)));
+                        .create(exercise)));
 
         exerciseGroup.getExercises().forEach(exercise -> uncheckRun(() ->
                 addExerciseToExerciseGroup(exercise.getExerciseId(), exerciseGroup.getGroupId())));

@@ -1,8 +1,7 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
-import com.roervik.tdt4145.dbproject.DBConnection;
+import com.roervik.tdt4145.dbproject.DBManager;
 import com.roervik.tdt4145.dbproject.model.Exercise;
-import com.roervik.tdt4145.dbproject.util.GetAll;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ExerciseDBManager extends DBConnection implements GetAll<Exercise> {
+public class ExerciseDBManager extends DBManager<Exercise> {
     public ExerciseDBManager() throws Exception {
         super();
     }
@@ -32,7 +31,7 @@ public class ExerciseDBManager extends DBConnection implements GetAll<Exercise> 
         return Exercise.ordering.immutableSortedCopy(exercises);
     }
 
-    public Optional<Exercise> getExerciseById(final UUID exerciseId) throws Exception {
+    public Optional<Exercise> getById(final UUID exerciseId) throws Exception {
         final String query = "select name, description from Exercise" +
                 " where exerciseId = :exerciseId:";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -91,7 +90,7 @@ public class ExerciseDBManager extends DBConnection implements GetAll<Exercise> 
         return Exercise.ordering.immutableSortedCopy(exercises);
     }
 
-    public void createExercise(final Exercise exercise) throws Exception {
+    public void create(final Exercise exercise) throws Exception {
         String query = "insert into Exercise (exerciseId, name, description)" +
                 " values (:exerciseId:, :name:, :description:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);

@@ -32,10 +32,10 @@ public class EquipmentDBManagerTest {
                 .description("MyDescription")
                 .name("EquipmentName")
                 .build();
-        equipmentDBManager.createEquipment(equipment);
+        equipmentDBManager.create(equipment);
 
         final Optional<Equipment> retrievedEquipment =
-                equipmentDBManager.getEquipmentById(equipment.getEquipmentId());
+                equipmentDBManager.getById(equipment.getEquipmentId());
         assertThat(retrievedEquipment).isPresent();
         assertThat(retrievedEquipment.get())
                 .isEqualToComparingFieldByField(equipment);
@@ -45,7 +45,7 @@ public class EquipmentDBManagerTest {
     public void testGetEquipmentWithInvalidId() throws Exception {
         final UUID invalidId = UUID.randomUUID();
         final Optional<Equipment> retrievedEquipment =
-                equipmentDBManager.getEquipmentById(invalidId);
+                equipmentDBManager.getById(invalidId);
         assertThat(retrievedEquipment).isEmpty();
     }
 }

@@ -39,10 +39,10 @@ public class ExerciseWithEquipmentDBManagerTest {
                 .description("MyDescription")
                 .equipment(equipment)
                 .build();
-        exerciseWithEquipmentDBManager.createExerciseWithEquipment(exerciseWithEquipment);
+        exerciseWithEquipmentDBManager.create(exerciseWithEquipment);
 
         final Optional<ExerciseWithEquipment> retrievedExerciseWithEquipment =
-                exerciseWithEquipmentDBManager.getExerciseWithEquipmentById(exerciseWithEquipment.getExerciseId());
+                exerciseWithEquipmentDBManager.getById(exerciseWithEquipment.getExerciseId());
         assertThat(retrievedExerciseWithEquipment).isPresent();
         assertThat(retrievedExerciseWithEquipment.get())
                 .isEqualToComparingFieldByFieldRecursively(exerciseWithEquipment);
@@ -55,17 +55,17 @@ public class ExerciseWithEquipmentDBManagerTest {
                 .description("MyDescription")
                 .name("EquipmentName")
                 .build();
-        equipmentDBManager.createEquipment(equipment);
+        equipmentDBManager.create(equipment);
 
         final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
                 .exerciseId(UUID.randomUUID())
                 .description("MyDescription")
                 .equipment(equipment)
                 .build();
-        exerciseWithEquipmentDBManager.createExerciseWithEquipment(exerciseWithEquipment);
+        exerciseWithEquipmentDBManager.create(exerciseWithEquipment);
 
         final Optional<ExerciseWithEquipment> retrievedExerciseWithEquipment =
-                exerciseWithEquipmentDBManager.getExerciseWithEquipmentById(exerciseWithEquipment.getExerciseId());
+                exerciseWithEquipmentDBManager.getById(exerciseWithEquipment.getExerciseId());
         assertThat(retrievedExerciseWithEquipment).isPresent();
         assertThat(retrievedExerciseWithEquipment.get())
                 .isEqualToComparingFieldByFieldRecursively(exerciseWithEquipment);
@@ -75,7 +75,7 @@ public class ExerciseWithEquipmentDBManagerTest {
     public void testGetExerciseWithEquipmentWithInvalidId() throws Exception {
         final UUID invalidId = UUID.randomUUID();
         final Optional<ExerciseWithEquipment> retrievedExerciseWithEquipment =
-                exerciseWithEquipmentDBManager.getExerciseWithEquipmentById(invalidId);
+                exerciseWithEquipmentDBManager.getById(invalidId);
         assertThat(retrievedExerciseWithEquipment).isEmpty();
     }
 }

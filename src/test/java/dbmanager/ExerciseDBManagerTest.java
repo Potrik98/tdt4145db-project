@@ -32,10 +32,10 @@ public class ExerciseDBManagerTest {
                 .description("MyDescription")
                 .name("ExerciseName")
                 .build();
-        exerciseDBManager.createExercise(exercise);
+        exerciseDBManager.create(exercise);
 
         final Optional<Exercise> retrievedExercise =
-                exerciseDBManager.getExerciseById(exercise.getExerciseId());
+                exerciseDBManager.getById(exercise.getExerciseId());
         assertThat(retrievedExercise).isPresent();
         assertThat(retrievedExercise.get())
                 .isEqualToComparingFieldByField(exercise);
@@ -45,7 +45,7 @@ public class ExerciseDBManagerTest {
     public void testGetExerciseWithInvalidId() throws Exception {
         final UUID invalidId = UUID.randomUUID();
         final Optional<Exercise> retrievedExercise =
-                exerciseDBManager.getExerciseById(invalidId);
+                exerciseDBManager.getById(invalidId);
         assertThat(retrievedExercise).isEmpty();
     }
 }

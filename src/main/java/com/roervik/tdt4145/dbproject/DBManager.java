@@ -7,13 +7,22 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
 
-public class DBConnection {
+public abstract class DBManager<T> {
     protected final Connection connection;
 
+    public abstract Optional<T> getById(UUID objectId) throws Exception;
+
+    public abstract void create(T object) throws Exception;
+
+    public abstract List<T> getAll() throws Exception;
+
     private static Connection openConnectionFromProperties(String propertiesFile) throws Exception {
-        InputStream input = DBConnection.class.getResourceAsStream(propertiesFile);
+        InputStream input = DBManager.class.getResourceAsStream(propertiesFile);
         Properties connectionProps = new Properties();
         try {
             connectionProps.load(input);
@@ -28,7 +37,7 @@ public class DBConnection {
     }
 
     public void loadCreateScript() throws Exception {
-        InputStream input = DBConnection.class
+        InputStream input = DBManager.class
                 .getResourceAsStream("CreateDatabase.sql");
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -43,11 +52,11 @@ public class DBConnection {
         statement.execute(out.toString());
     }
 
-    public DBConnection(String propertiesFile) throws Exception {
+    private DBManager(String propertiesFile) throws Exception {
         connection = openConnectionFromProperties(propertiesFile);
     }
 
-    public DBConnection() throws Exception {
+    public DBManager() throws Exception {
         this(Program.getProperty("dbconnection"));
     }
 

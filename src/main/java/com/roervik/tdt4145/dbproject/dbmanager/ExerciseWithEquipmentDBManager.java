@@ -1,8 +1,7 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
-import com.roervik.tdt4145.dbproject.DBConnection;
+import com.roervik.tdt4145.dbproject.DBManager;
 import com.roervik.tdt4145.dbproject.model.ExerciseWithEquipment;
-import com.roervik.tdt4145.dbproject.util.GetAll;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
@@ -13,7 +12,7 @@ import java.util.UUID;
 
 import static com.roervik.tdt4145.dbproject.Program.equipmentDBManager;
 
-public class ExerciseWithEquipmentDBManager extends DBConnection implements GetAll<ExerciseWithEquipment> {
+public class ExerciseWithEquipmentDBManager extends DBManager<ExerciseWithEquipment> {
     public ExerciseWithEquipmentDBManager() throws Exception {
         super();
     }
@@ -28,7 +27,7 @@ public class ExerciseWithEquipmentDBManager extends DBConnection implements GetA
             final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
                     .exerciseId(exerciseId)
                     .description(result.getString("description"))
-                    .equipment(equipmentDBManager.getEquipmentById(
+                    .equipment(equipmentDBManager.getById(
                             UUID.fromString(result.getString("equipmentId"))
                     ).get())
                     .build();
@@ -37,7 +36,7 @@ public class ExerciseWithEquipmentDBManager extends DBConnection implements GetA
         return ExerciseWithEquipment.ordering.immutableSortedCopy(exerciseWithEquipments);
     }
 
-    public Optional<ExerciseWithEquipment> getExerciseWithEquipmentById(final UUID exerciseId) throws Exception {
+    public Optional<ExerciseWithEquipment> getById(final UUID exerciseId) throws Exception {
         final String query = "select equipmentId, description from ExerciseWithEquipment" +
                 " where exerciseId = :exerciseId:";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -49,7 +48,7 @@ public class ExerciseWithEquipmentDBManager extends DBConnection implements GetA
         final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
                 .exerciseId(exerciseId)
                 .description(result.getString("description"))
-                .equipment(equipmentDBManager.getEquipmentById(
+                .equipment(equipmentDBManager.getById(
                         UUID.fromString(result.getString("equipmentId"))
                 ).get())
                 .build();
@@ -70,7 +69,7 @@ public class ExerciseWithEquipmentDBManager extends DBConnection implements GetA
             final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
                     .exerciseId(UUID.fromString(result.getString("exerciseId")))
                     .description(result.getString("description"))
-                    .equipment(equipmentDBManager.getEquipmentById(
+                    .equipment(equipmentDBManager.getById(
                             UUID.fromString(result.getString("equipmentId"))
                     ).get())
                     .build();
@@ -93,7 +92,7 @@ public class ExerciseWithEquipmentDBManager extends DBConnection implements GetA
             final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
                     .exerciseId(UUID.fromString(result.getString("exerciseId")))
                     .description(result.getString("description"))
-                    .equipment(equipmentDBManager.getEquipmentById(
+                    .equipment(equipmentDBManager.getById(
                             UUID.fromString(result.getString("equipmentId"))
                     ).get())
                     .build();
@@ -102,9 +101,9 @@ public class ExerciseWithEquipmentDBManager extends DBConnection implements GetA
         return ExerciseWithEquipment.ordering.immutableSortedCopy(exerciseWithEquipments);
     }
 
-    public void createExerciseWithEquipment(final ExerciseWithEquipment exerciseWithEquipment) throws Exception {
-        if (!equipmentDBManager.getEquipmentById(exerciseWithEquipment.getEquipment().getEquipmentId()).isPresent()) {
-            equipmentDBManager.createEquipment(exerciseWithEquipment.getEquipment());
+    public void create(final ExerciseWithEquipment exerciseWithEquipment) throws Exception {
+        if (!equipmentDBManager.getById(exerciseWithEquipment.getEquipment().getEquipmentId()).isPresent()) {
+            equipmentDBManager.create(exerciseWithEquipment.getEquipment());
         }
         String query = "insert into ExerciseWithEquipment (exerciseId, equipmentId, description)" +
                 " values (:exerciseId:, :equipmentId:, :description:);";

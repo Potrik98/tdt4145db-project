@@ -24,9 +24,7 @@ public class Program {
     }
 
     private static void loadProperties() {
-        System.out.println("Reading program.properties");
         InputStream input = Program.class.getResourceAsStream("program.properties");
-        System.out.println(input);
         programProperties = new Properties();
         try {
             programProperties.load(input);

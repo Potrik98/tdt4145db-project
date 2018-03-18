@@ -1,6 +1,6 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
-import com.roervik.tdt4145.dbproject.DBConnection;
+import com.roervik.tdt4145.dbproject.DBManager;
 import com.roervik.tdt4145.dbproject.Program;
 import com.roervik.tdt4145.dbproject.model.Workout;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
@@ -16,12 +16,12 @@ import static com.roervik.tdt4145.dbproject.Program.exerciseWithEquipmentDBManag
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckCall;
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckRun;
 
-public class WorkoutDBManager extends DBConnection {
+public class WorkoutDBManager extends DBManager<Workout> {
     public WorkoutDBManager() throws Exception {
         super();
     }
 
-    public Optional<Workout> getWorkoutById(final UUID workoutId) throws Exception {
+    public Optional<Workout> getById(final UUID workoutId) throws Exception {
         final String query = "select performance, personalShape, startTime, endTime from Workout" +
                 " where workoutId = :workoutId:;";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -83,7 +83,7 @@ public class WorkoutDBManager extends DBConnection {
         statement.getStatement().executeUpdate();
     }
 
-    public void createWorkout(final Workout workout) throws Exception {
+    public void create(final Workout workout) throws Exception {
         String query = "insert into Workout (workoutId, performance, personalShape, startTime, endTime)" +
                 " values (:workoutId:, :performance:, :personalShape:, :startTime:, :endTime:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
@@ -96,14 +96,14 @@ public class WorkoutDBManager extends DBConnection {
 
         workout.getExercises().stream()
                 .filter(exercise -> uncheckCall(() ->
-                        !exerciseDBManager.getExerciseById(exercise.getExerciseId()).isPresent()))
-                .forEach(exercise -> uncheckRun(() -> exerciseDBManager.createExercise(exercise)));
+                        !exerciseDBManager.getById(exercise.getExerciseId()).isPresent()))
+                .forEach(exercise -> uncheckRun(() -> exerciseDBManager.create(exercise)));
         workout.getExercisesWithEquipment().stream()
                 .filter(exercise -> uncheckCall(() ->
                         !exerciseWithEquipmentDBManager
-                                .getExerciseWithEquipmentById(exercise.getExerciseId()).isPresent()))
+                                .getById(exercise.getExerciseId()).isPresent()))
                 .forEach(exercise -> uncheckRun(() -> exerciseWithEquipmentDBManager
-                        .createExerciseWithEquipment(exercise)));
+                        .create(exercise)));
 
         workout.getExercises().forEach(exercise -> uncheckRun(() ->
                 addExerciseToWorkout(exercise.getExerciseId(), workout.getWorkoutId())));
