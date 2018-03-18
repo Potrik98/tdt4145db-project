@@ -45,7 +45,7 @@ public class Client {
 
     private static final Consumer<Map<String, String>> listAction = arguments ->
             uncheckRun(() -> writeForEach(
-                    dbManagers.get(arguments.get("object")).getAll().stream()
+                    ((List<?>) dbManagers.get(arguments.get("object")).getAll()).stream()
                             .limit(arguments.containsKey("count")
                                     ? Integer.valueOf(arguments.get("count")) : 100),
                     o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
@@ -77,33 +77,33 @@ public class Client {
                             (arguments.containsKey("id")
                                     ? Stream.of(dbManagers.get(arguments.get("object"))
                                             .getById(UUID.fromString(arguments.get("id"))))
-                                    : dbManagers.get(arguments.get("object")).getAll().stream()
+                                    : ((List<?>) dbManagers.get(arguments.get("object")).getAll()).stream()
                             )
                             .collect(Collectors.toMap(
                                     Function.identity(),
                                     ex -> uncheckCall(() -> WorkoutResult.ofWorkouts(
                                                     workoutDBManager.getAll().stream()
-                                                    .filter(workout -> arguments.containsKey("startTime")
-                                                            ? LocalDateTime.parse(arguments.get("startTime"))
+                                                    .filter(workout -> !arguments.containsKey("startTime")
+                                                            || LocalDateTime.parse(arguments.get("startTime"))
                                                                     .isBefore(workout.getStartTime())
-                                                            : true
                                                     )
-                                                    .filter(workout -> arguments.containsKey("endTime")
-                                                            ? LocalDateTime.parse(arguments.get("endTime"))
-                                                            .isAfter(workout.getEndTime())
-                                                            : true
+                                                    .filter(workout -> !arguments.containsKey("endTime")
+                                                            || LocalDateTime.parse(arguments.get("endTime"))
+                                                                    .isAfter(workout.getEndTime())
                                                     )
                                                     .filter(workout -> uncheckCall(() ->
-                                                            ((List)
+                                                            ((List<?>)
                                                                     workout.getClass()
                                                                             .getMethod("get" + arguments.get("object") + "s")
                                                                             .invoke(workout)
                                                             )
                                                             .stream()
                                                             .map(o -> uncheckCall(() ->
-                                                                    (UUID) o.getClass().getMethod("getExerciseId").invoke(o)))
+                                                                    (UUID) o.getClass().getMethod("getExerciseId")
+                                                                            .invoke(o)))
                                                             .anyMatch(id -> id.equals(uncheckCall(() ->
-                                                                    (UUID) ex.getClass().getMethod("getExerciseId").invoke(ex)
+                                                                    (UUID) ex.getClass().getMethod("getExerciseId")
+                                                                            .invoke(ex)
                                                             )))
                                                     ))
                                                     .collect(Collectors.toList())
