@@ -1,16 +1,20 @@
 package com.roervik.tdt4145.dbproject;
 
-import com.roervik.tdt4145.dbproject.dbmanager.*;
+import com.roervik.tdt4145.dbproject.dbmanager.EquipmentDBManager;
+import com.roervik.tdt4145.dbproject.dbmanager.ExerciseDBManager;
+import com.roervik.tdt4145.dbproject.dbmanager.ExerciseGroupDBManager;
+import com.roervik.tdt4145.dbproject.dbmanager.ExerciseWithEquipmentDBManager;
+import com.roervik.tdt4145.dbproject.dbmanager.WorkoutDBManager;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Scanner;
 
 public class Program {
     private static Properties programProperties;
 
     public static ExerciseDBManager exerciseDBManager;
+    
     public static ExerciseWithEquipmentDBManager exerciseWithEquipmentDBManager;
     public static EquipmentDBManager equipmentDBManager;
     public static WorkoutDBManager workoutDBManager;
@@ -53,23 +57,5 @@ public class Program {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        init();
-        try {
-            exerciseDBManager.loadCreateScript();
-        } catch (Exception e) {
-            e.printStackTrace();
-            closeConnections();
-            return;
-        }
-        boolean running = true;
-        Scanner input = new Scanner(System.in);
-        while (running) {
-            String line = input.nextLine();
-            running = !line.contains("q");
-        }
-        closeConnections();
     }
 }
