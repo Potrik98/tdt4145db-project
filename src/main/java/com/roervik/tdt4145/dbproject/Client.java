@@ -1,6 +1,7 @@
 package com.roervik.tdt4145.dbproject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.roervik.tdt4145.dbproject.dbmanager.DBManager;
 import com.roervik.tdt4145.dbproject.dbmanager.DBManagerWithRelation;
@@ -76,6 +77,29 @@ public class Client {
     private static final Consumer<Map<String, String>> listAction = arguments ->
             uncheckRun(() -> writeForEach(
                     ((List<?>) dbManagers.get(arguments.get("object")).getAll()).stream()
+                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("in")
+                                    || (arguments.containsKey("id")
+                                            ? Stream.of(relationDBManagers.get(arguments.get("in"))
+                                                    .getById(UUID.fromString(arguments.get("id"))).get())
+                                            : ((List<?>) relationDBManagers.get(arguments.get("in")).getAll()).stream())
+                                    .anyMatch(rel -> uncheckCall(() ->
+                                            ((List<?>) rel.getClass().getMethod("get" + arguments.get("object") + "s")
+                                                    .invoke(rel))
+                                            .contains(obj)
+                                    ))
+                            ))
+                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("after")
+                                    || Objects.isNull(obj.getClass().getMethod("getStartTime"))
+                                    || LocalDateTime.parse(arguments.get("after"))
+                                    .isBefore((LocalDateTime) obj.getClass()
+                                            .getMethod("getStartTime").invoke(obj))
+                            ))
+                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("before")
+                                    || Objects.isNull(obj.getClass().getMethod("getEndTime"))
+                                    || LocalDateTime.parse(arguments.get("before"))
+                                    .isAfter((LocalDateTime) obj.getClass()
+                                            .getMethod("getEndTime").invoke(obj))
+                            ))
                             .limit(arguments.containsKey("count")
                                     ? Integer.valueOf(arguments.get("count")) : 100),
                     o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
