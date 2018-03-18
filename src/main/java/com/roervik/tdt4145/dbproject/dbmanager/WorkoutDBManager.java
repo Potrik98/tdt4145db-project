@@ -22,7 +22,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
     }
 
     public Optional<Workout> getById(final UUID workoutId) throws Exception {
-        final String query = "select performance, personalShape, startTime, endTime from Workout" +
+        final String query = "select performance, personalShape, note, startTime, endTime from Workout" +
                 " where workoutId = :workoutId:;";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("workoutId", workoutId.toString());
@@ -34,6 +34,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
                 .workoutId(workoutId)
                 .performance(result.getInt("performance"))
                 .personalShape(result.getInt("personalShape"))
+                .note(result.getString("note"))
                 .startTime(result.getTimestamp("startTime").toLocalDateTime())
                 .endTime(result.getTimestamp("endTime").toLocalDateTime())
                 .exercises(exerciseDBManager.getExercisesInWorkout(workoutId))
@@ -44,7 +45,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
     }
 
     public List<Workout> getAll() throws Exception {
-        final String query = "select workoutId, performance, personalShape, startTime, endTime from Workout;";
+        final String query = "select workoutId, performance, personalShape, note, startTime, endTime from Workout;";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         final ResultSet result = statement.getStatement().executeQuery();
         final List<Workout> workouts = new ArrayList<>();
@@ -54,6 +55,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
                     .workoutId(workoutId)
                     .performance(result.getInt("performance"))
                     .personalShape(result.getInt("personalShape"))
+                    .note(result.getString("note"))
                     .startTime(result.getTimestamp("startTime").toLocalDateTime())
                     .endTime(result.getTimestamp("endTime").toLocalDateTime())
                     .exercises(exerciseDBManager.getExercisesInWorkout(workoutId))
@@ -84,12 +86,13 @@ public class WorkoutDBManager extends DBManager<Workout> {
     }
 
     public void create(final Workout workout) throws Exception {
-        String query = "insert into Workout (workoutId, performance, personalShape, startTime, endTime)" +
-                " values (:workoutId:, :performance:, :personalShape:, :startTime:, :endTime:);";
+        String query = "insert into Workout (workoutId, performance, personalShape, note, startTime, endTime)" +
+                " values (:workoutId:, :performance:, :personalShape:, :note:, :startTime:, :endTime:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("workoutId", workout.getWorkoutId().toString());
         statement.setInt("performance", workout.getPerformance());
         statement.setInt("personalShape", workout.getPersonalShape());
+        statement.setString("note", workout.getNote());
         statement.setTimestamp("startTime", workout.getStartTime());
         statement.setTimestamp("endTime", workout.getEndTime());
         statement.getStatement().executeUpdate();

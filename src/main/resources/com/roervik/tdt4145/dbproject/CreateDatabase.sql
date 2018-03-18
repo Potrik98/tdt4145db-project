@@ -2,6 +2,7 @@ CREATE TABLE Workout(
   workoutId varchar(36) NOT NULL PRIMARY KEY,
   performance integer,
   personalShape integer,
+  note varchar(255),
   startTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   endTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

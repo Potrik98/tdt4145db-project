@@ -20,6 +20,7 @@ public class Workout {
     final UUID workoutId;
     final Integer performance;
     final Integer personalShape;
+    String note;
     final LocalDateTime startTime;
     final LocalDateTime endTime;
     final List<Exercise> exercises;

@@ -56,6 +56,7 @@ public class WorkoutDBManagerTest {
         final Workout workout = Workout.builder()
                 .performance(123)
                 .personalShape(123)
+                .note("Note")
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now())
                 .exercises(Exercise.ordering.immutableSortedCopy(
