@@ -22,12 +22,12 @@ public class WorkoutResult {
                 .averagePerformance(workouts.stream()
                         .mapToInt(Workout::getPerformance)
                         .average()
-                        .getAsDouble())
+                        .orElse(0.0))
                 .averagePersonalShape(
                         workouts.stream()
                                 .mapToInt(Workout::getPerformance)
                                 .average()
-                                .getAsDouble())
+                                .orElse(0.0))
                 .performances(workouts.stream()
                         .map(Workout::getPerformance)
                         .collect(Collectors.toList()))
@@ -37,11 +37,11 @@ public class WorkoutResult {
                 .startTime(workouts.stream()
                         .map(Workout::getStartTime)
                         .min(LocalDateTime::compareTo)
-                        .get())
+                        .orElse(LocalDateTime.now()))
                 .endTime(workouts.stream()
                         .map(Workout::getEndTime)
                         .max(LocalDateTime::compareTo)
-                        .get())
+                        .orElse(LocalDateTime.now()))
                 .build();
     }
 }
