@@ -2,6 +2,7 @@ package com.roervik.tdt4145.dbproject.dbmanager;
 
 import com.roervik.tdt4145.dbproject.DBConnection;
 import com.roervik.tdt4145.dbproject.model.Exercise;
+import com.roervik.tdt4145.dbproject.util.GetAll;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
@@ -10,9 +11,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ExerciseDBManager extends DBConnection {
+public class ExerciseDBManager extends DBConnection implements GetAll<Exercise> {
     public ExerciseDBManager() throws Exception {
         super();
+    }
+
+    public List<Exercise> getAll() throws Exception {
+        final String query = "select exerciseId, name, description from Exercise;";
+        NamedParameterStatement statement = new NamedParameterStatement(query, connection);
+        final ResultSet result = statement.getStatement().executeQuery();
+        final List<Exercise> exercises = new ArrayList<>();
+        while(result.next()) {
+            final Exercise exercise = Exercise.builder()
+                    .exerciseId(UUID.fromString(result.getString("exerciseId")))
+                    .name(result.getString("name"))
+                    .description(result.getString("description"))
+                    .build();
+            exercises.add(exercise);
+        }
+        return Exercise.ordering.immutableSortedCopy(exercises);
     }
 
     public Optional<Exercise> getExerciseById(final UUID exerciseId) throws Exception {

@@ -2,9 +2,12 @@ package com.roervik.tdt4145.dbproject.dbmanager;
 
 import com.roervik.tdt4145.dbproject.DBConnection;
 import com.roervik.tdt4145.dbproject.model.ExerciseGroup;
+import com.roervik.tdt4145.dbproject.util.GetAll;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,7 +16,7 @@ import static com.roervik.tdt4145.dbproject.Program.exerciseWithEquipmentDBManag
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckCall;
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckRun;
 
-public class ExerciseGroupDBManager extends DBConnection {
+public class ExerciseGroupDBManager extends DBConnection implements GetAll<ExerciseGroup> {
     public ExerciseGroupDBManager() throws Exception {
         super();
     }
@@ -35,6 +38,25 @@ public class ExerciseGroupDBManager extends DBConnection {
                         .getExerciseWithEquipmentsInExerciseGroup(groupId))
                 .build();
         return Optional.of(exerciseGroup);
+    }
+
+    public List<ExerciseGroup> getAll() throws Exception {
+        final String query = "select groupId, name from ExerciseGroup;";
+        NamedParameterStatement statement = new NamedParameterStatement(query, connection);
+        final ResultSet result = statement.getStatement().executeQuery();
+        final List<ExerciseGroup> exerciseGroups = new ArrayList<>();
+        while(result.next()) {
+            UUID groupId = UUID.fromString(result.getString("groupId"));
+            final ExerciseGroup exerciseGroup = ExerciseGroup.builder()
+                    .groupId(groupId)
+                    .name(result.getString("name"))
+                    .exercises(exerciseDBManager.getExercisesInExerciseGroup(groupId))
+                    .exercisesWithEquipment(exerciseWithEquipmentDBManager
+                            .getExerciseWithEquipmentsInExerciseGroup(groupId))
+                    .build();
+            exerciseGroups.add(exerciseGroup);
+        }
+        return ExerciseGroup.ordering.immutableSortedCopy(exerciseGroups);
     }
 
     public void addExerciseToExerciseGroup(final UUID exerciseId, final UUID groupId) throws Exception {

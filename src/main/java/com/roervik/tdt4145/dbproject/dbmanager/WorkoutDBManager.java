@@ -6,6 +6,8 @@ import com.roervik.tdt4145.dbproject.model.Workout;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,6 +41,28 @@ public class WorkoutDBManager extends DBConnection {
                         .getExerciseWithEquipmentsInWorkout(workoutId))
                 .build();
         return Optional.of(workout);
+    }
+
+    public List<Workout> getAll() throws Exception {
+        final String query = "select workoutId, performance, personalShape, startTime, endTime from Workout;";
+        NamedParameterStatement statement = new NamedParameterStatement(query, connection);
+        final ResultSet result = statement.getStatement().executeQuery();
+        final List<Workout> workouts = new ArrayList<>();
+        while(result.next()) {
+            UUID workoutId = UUID.fromString(result.getString("workoutId"));
+            final Workout workout = Workout.builder()
+                    .workoutId(workoutId)
+                    .performance(result.getInt("performance"))
+                    .personalShape(result.getInt("personalShape"))
+                    .startTime(result.getTimestamp("startTime").toLocalDateTime())
+                    .endTime(result.getTimestamp("endTime").toLocalDateTime())
+                    .exercises(exerciseDBManager.getExercisesInWorkout(workoutId))
+                    .exercisesWithEquipment(Program.exerciseWithEquipmentDBManager
+                            .getExerciseWithEquipmentsInWorkout(workoutId))
+                    .build();
+            workouts.add(workout);
+        }
+        return Workout.ordering.immutableSortedCopy(workouts);
     }
 
     public void addExerciseToWorkout(final UUID exerciseId, final UUID workoutId) throws Exception {

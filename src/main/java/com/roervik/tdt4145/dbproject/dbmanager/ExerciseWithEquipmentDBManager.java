@@ -2,6 +2,7 @@ package com.roervik.tdt4145.dbproject.dbmanager;
 
 import com.roervik.tdt4145.dbproject.DBConnection;
 import com.roervik.tdt4145.dbproject.model.ExerciseWithEquipment;
+import com.roervik.tdt4145.dbproject.util.GetAll;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
@@ -12,9 +13,28 @@ import java.util.UUID;
 
 import static com.roervik.tdt4145.dbproject.Program.equipmentDBManager;
 
-public class ExerciseWithEquipmentDBManager extends DBConnection {
+public class ExerciseWithEquipmentDBManager extends DBConnection implements GetAll<ExerciseWithEquipment> {
     public ExerciseWithEquipmentDBManager() throws Exception {
         super();
+    }
+
+    public List<ExerciseWithEquipment> getAll() throws Exception {
+        final String query = "select exerciseId, equipmentId, description from ExerciseWithEquipment;";
+        NamedParameterStatement statement = new NamedParameterStatement(query, connection);
+        final ResultSet result = statement.getStatement().executeQuery();
+        final List<ExerciseWithEquipment> exerciseWithEquipments = new ArrayList<>();
+        while(result.next()) {
+            final UUID exerciseId = UUID.fromString(result.getString("exerciseId"));
+            final ExerciseWithEquipment exerciseWithEquipment = ExerciseWithEquipment.builder()
+                    .exerciseId(exerciseId)
+                    .description(result.getString("description"))
+                    .equipment(equipmentDBManager.getEquipmentById(
+                            UUID.fromString(result.getString("equipmentId"))
+                    ).get())
+                    .build();
+            exerciseWithEquipments.add(exerciseWithEquipment);
+        }
+        return ExerciseWithEquipment.ordering.immutableSortedCopy(exerciseWithEquipments);
     }
 
     public Optional<ExerciseWithEquipment> getExerciseWithEquipmentById(final UUID exerciseId) throws Exception {
