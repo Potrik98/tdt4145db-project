@@ -43,7 +43,7 @@ public abstract class DBManager<T> {
         return connection;
     }
 
-    public void loadCreateScript() throws Exception {
+    public void loadCreateScript() {
         try {
             InputStream input = DBManager.class
                     .getResourceAsStream("CreateDatabase.sql");

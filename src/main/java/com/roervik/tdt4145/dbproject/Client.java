@@ -35,8 +35,16 @@ public class Client {
     private static final ObjectMapper mapper = new ObjectMapper()
             .findAndRegisterModules();
 
+    private static boolean running;
+
     private static Map<String, DBManager> dbManagers;
     private static Map<String, DBManagerWithRelation> relationDBManagers;
+
+    private static final Consumer<Map<String, String>> exitAction = arguments ->
+            running = false;
+
+    private static final Consumer<Map<String, String>> loadCreateScriptAction = arguments ->
+            exerciseDBManager.loadCreateScript();
 
     private static final Consumer<Map<String, String>> listRelatedAction = arguments ->
             uncheckRun(() -> writeForEach(
@@ -147,12 +155,16 @@ public class Client {
             ));
 
     private static final Map<String, Consumer<Map<String, String>>> actions =
-            ImmutableMap.of(
-                    "list", listAction,
-                    "create", createAction,
-                    "createList", createListAction,
-                    "listRelated", listRelatedAction,
-                    "results", resultsAction);
+            ImmutableMap.<String, Consumer<Map<String, String>>>builder()
+                    .put("list", listAction)
+                    .put("create", createAction)
+                    .put("createList", createListAction)
+                    .put("listRelated", listRelatedAction)
+                    .put("results", resultsAction)
+                    .put("loadCreateScript", loadCreateScriptAction)
+                    .put("exit", exitAction)
+                    .put("quit", exitAction)
+                    .build();
 
     public static void main(String[] args) throws Exception {
         Scanner input = new Scanner(System.in);
@@ -167,11 +179,9 @@ public class Client {
                 "Workout", workoutDBManager,
                 "ExerciseGroup", exerciseGroupDBManager);
         System.out.println("Ready for commands");
-        while (true) {
+        running = true;
+        while (running) {
             String line = input.nextLine();
-            if (line.startsWith("exit") || line.startsWith("quit")) {
-                break;
-            }
             try {
                 final String[] lineArgs = line.split(" ");
                 final Map<String, String> arguments = parseArguments(lineArgs);

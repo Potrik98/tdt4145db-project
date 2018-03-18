@@ -14,7 +14,7 @@ public class Program {
     private static Properties programProperties;
 
     public static ExerciseDBManager exerciseDBManager;
-    
+
     public static ExerciseWithEquipmentDBManager exerciseWithEquipmentDBManager;
     public static EquipmentDBManager equipmentDBManager;
     public static WorkoutDBManager workoutDBManager;
