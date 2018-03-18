@@ -1,6 +1,8 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
 import com.roervik.tdt4145.dbproject.Program;
+import com.roervik.tdt4145.dbproject.model.Exercise;
+import com.roervik.tdt4145.dbproject.model.ExerciseWithEquipment;
 import com.roervik.tdt4145.dbproject.model.Workout;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
@@ -18,6 +20,14 @@ import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckRun;
 public class WorkoutDBManager extends DBManagerWithRelation<Workout> {
     public WorkoutDBManager() throws Exception {
         super();
+    }
+
+    public List<Exercise> getRelatedExercises(UUID workoutId) throws Exception {
+        return exerciseDBManager.getExercisesInWorkout(workoutId);
+    }
+
+    public List<ExerciseWithEquipment> getRelatedExerciseWithEquipments(UUID workoutId) throws Exception {
+        return exerciseWithEquipmentDBManager.getExerciseWithEquipmentsInWorkout(workoutId);
     }
 
     public Optional<Workout> getById(final UUID workoutId) throws Exception {

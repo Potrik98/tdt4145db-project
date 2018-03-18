@@ -1,6 +1,8 @@
 package com.roervik.tdt4145.dbproject.dbmanager;
 
+import com.roervik.tdt4145.dbproject.model.Exercise;
 import com.roervik.tdt4145.dbproject.model.ExerciseGroup;
+import com.roervik.tdt4145.dbproject.model.ExerciseWithEquipment;
 import com.roervik.tdt4145.dbproject.util.NamedParameterStatement;
 
 import java.sql.ResultSet;
@@ -17,6 +19,14 @@ import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckRun;
 public class ExerciseGroupDBManager extends DBManagerWithRelation<ExerciseGroup> {
     public ExerciseGroupDBManager() throws Exception {
         super();
+    }
+
+    public List<Exercise> getRelatedExercises(UUID groupId) throws Exception {
+        return exerciseDBManager.getExercisesInExerciseGroup(groupId);
+    }
+
+    public List<ExerciseWithEquipment> getRelatedExerciseWithEquipments(UUID groupId) throws Exception {
+        return exerciseWithEquipmentDBManager.getExerciseWithEquipmentsInExerciseGroup(groupId);
     }
 
     public Optional<ExerciseGroup> getById(final UUID groupId) throws Exception {

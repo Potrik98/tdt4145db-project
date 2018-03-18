@@ -3,6 +3,7 @@ package com.roervik.tdt4145.dbproject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.roervik.tdt4145.dbproject.dbmanager.DBManager;
+import com.roervik.tdt4145.dbproject.dbmanager.DBManagerWithRelation;
 import com.roervik.tdt4145.dbproject.model.WorkoutResult;
 
 import java.io.File;
@@ -27,6 +28,20 @@ public class Client {
             .findAndRegisterModules();
 
     private static Map<String, DBManager> dbManagers;
+    private static Map<String, DBManagerWithRelation> relationDBManagers;
+
+    private static final Consumer<Map<String, String>> listRelatedAction = arguments ->
+            uncheckRun(() -> writeForEach(
+                    ((List<?>) relationDBManagers.get(arguments.get("in")).getClass()
+                            .getMethod("getRelated" + arguments.get("object") + "s", UUID.class)
+                            .invoke(relationDBManagers.get(arguments.get("in")),
+                                    UUID.fromString(arguments.get("id"))
+                            )
+                    )
+                    .stream(),
+                    o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
+                    arguments
+            ));
 
     private static final Consumer<Map<String, String>> listAction = arguments ->
             uncheckRun(() -> writeForEach(
@@ -39,7 +54,7 @@ public class Client {
 
     private static final Consumer<Map<String, String>> createListAction = arguments ->
             uncheckRun(() ->
-                    ((List) mapper.readValue(
+                    ((List<?>) mapper.readValue(
                             readFile(arguments.get("input")),
                             mapper.getTypeFactory().constructCollectionType(
                                     List.class,
@@ -106,6 +121,7 @@ public class Client {
                     "list", listAction,
                     "create", createAction,
                     "createList", createListAction,
+                    "listRelated", listRelatedAction,
                     "results", resultsAction);
 
     public static void main(String[] args) throws Exception {
@@ -116,6 +132,9 @@ public class Client {
                 "Equipment", equipmentDBManager,
                 "Exercise", exerciseDBManager,
                 "ExerciseWithEquipment", exerciseWithEquipmentDBManager,
+                "Workout", workoutDBManager,
+                "ExerciseGroup", exerciseGroupDBManager);
+        relationDBManagers = ImmutableMap.of(
                 "Workout", workoutDBManager,
                 "ExerciseGroup", exerciseGroupDBManager);
         actions.get(args[0]).accept(arguments);
