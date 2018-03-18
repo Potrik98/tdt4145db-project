@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.roervik.tdt4145.dbproject.Program.*;
 import static com.roervik.tdt4145.dbproject.util.StreamUtils.*;
@@ -24,7 +25,9 @@ public class Client {
 
     private static final Consumer<Map<String, String>> listAction = arguments ->
             uncheckRun(() -> writeForEach(
-                    dbManagers.get(arguments.get("object")).getAll(),
+                    dbManagers.get(arguments.get("object")).getAll().stream()
+                            .limit(arguments.containsKey("count")
+                                    ? Integer.valueOf(arguments.get("count")) : 100),
                     o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
                     arguments
             ));
@@ -54,7 +57,7 @@ public class Client {
         System.out.println("Done");
     }
 
-    private static <T> void writeForEach(final Iterable<T> iterable,
+    private static <T> void writeForEach(final Stream<T> iterable,
                                          final Function<T, String> function,
                                          final Map<String, String> arguments) {
         final PrintWriter writer = getOutputPrintWriter(arguments);
