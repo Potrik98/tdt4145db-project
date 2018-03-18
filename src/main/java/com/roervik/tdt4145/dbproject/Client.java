@@ -1,7 +1,6 @@
 package com.roervik.tdt4145.dbproject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.roervik.tdt4145.dbproject.dbmanager.DBManager;
 import com.roervik.tdt4145.dbproject.dbmanager.DBManagerWithRelation;
@@ -146,33 +145,32 @@ public class Client {
                             .collect(Collectors.toMap(
                                     Function.identity(),
                                     ex -> uncheckCall(() -> WorkoutResult.ofWorkouts(
-                                                    workoutDBManager.getAll().stream()
-                                                    .filter(workout -> !arguments.containsKey("after")
-                                                            || LocalDateTime.parse(arguments.get("after"))
-                                                                    .isBefore(workout.getStartTime())
-                                                    )
-                                                    .filter(workout -> !arguments.containsKey("before")
-                                                            || LocalDateTime.parse(arguments.get("before"))
-                                                                    .isAfter(workout.getEndTime())
-                                                    )
-                                                    .filter(workout -> uncheckCall(() ->
-                                                            ((List<?>)
-                                                                    workout.getClass()
-                                                                            .getMethod("get" + arguments.get("object") + "s")
-                                                                            .invoke(workout)
-                                                            )
-                                                            .stream()
-                                                            .map(o -> uncheckCall(() ->
-                                                                    (UUID) o.getClass().getMethod("getExerciseId")
-                                                                            .invoke(o)))
-                                                            .anyMatch(id -> id.equals(uncheckCall(() ->
-                                                                    (UUID) ex.getClass().getMethod("getExerciseId")
-                                                                            .invoke(ex)
-                                                            )))
-                                                    ))
-                                                    .collect(Collectors.toList())
+                                            workoutDBManager.getAll().stream()
+                                            .filter(workout -> !arguments.containsKey("after")
+                                                    || LocalDateTime.parse(arguments.get("after"))
+                                                            .isBefore(workout.getStartTime())
                                             )
-                                    )
+                                            .filter(workout -> !arguments.containsKey("before")
+                                                    || LocalDateTime.parse(arguments.get("before"))
+                                                            .isAfter(workout.getEndTime())
+                                            )
+                                            .filter(workout -> uncheckCall(() ->
+                                                    ((List<?>)
+                                                            workout.getClass()
+                                                                    .getMethod("get" + arguments.get("object") + "s")
+                                                                    .invoke(workout)
+                                                    )
+                                                    .stream()
+                                                    .map(o -> uncheckCall(() ->
+                                                            (UUID) o.getClass().getMethod("getExerciseId")
+                                                                    .invoke(o)))
+                                                    .anyMatch(id -> id.equals(uncheckCall(() ->
+                                                            (UUID) ex.getClass().getMethod("getExerciseId")
+                                                                    .invoke(ex)
+                                                    )))
+                                            ))
+                                            .collect(Collectors.toList())
+                                    ))
                             ))
                     )
                     .entrySet().stream(),
