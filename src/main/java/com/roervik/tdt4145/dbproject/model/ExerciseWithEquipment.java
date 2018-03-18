@@ -16,13 +16,14 @@ public class ExerciseWithEquipment {
     public static final Ordering<ExerciseWithEquipment> ordering =
             Ordering.from(Comparator.comparing(ExerciseWithEquipment::getExerciseId));
 
-    @Builder.Default
-    final UUID exerciseId = UUID.randomUUID();
+    final UUID exerciseId;
     final String description;
     final Equipment equipment;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class ExerciseWithEquipmentBuilder {
-
+        public ExerciseWithEquipmentBuilder() {
+            this.exerciseId = UUID.randomUUID();
+        }
     }
 }

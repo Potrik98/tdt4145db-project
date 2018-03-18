@@ -87,7 +87,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
                 .filter(exercise -> uncheckCall(() ->
                         !exerciseDBManager.getById(exercise.getExerciseId()).isPresent()))
                 .forEach(exercise -> uncheckRun(() -> exerciseDBManager.create(exercise)));
-        exerciseGroup.getexerciseWithEquipments().stream()
+        exerciseGroup.getExerciseWithEquipments().stream()
                 .filter(exercise -> uncheckCall(() ->
                         !exerciseWithEquipmentDBManager
                                 .getById(exercise.getExerciseId()).isPresent()))
@@ -96,7 +96,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
 
         exerciseGroup.getExercises().forEach(exercise -> uncheckRun(() ->
                 addExerciseToExerciseGroup(exercise.getExerciseId(), exerciseGroup.getGroupId())));
-        exerciseGroup.getexerciseWithEquipments().forEach(exercise -> uncheckRun(() ->
+        exerciseGroup.getExerciseWithEquipments().forEach(exercise -> uncheckRun(() ->
                 addExerciseWithEquipmentToExerciseGroup(exercise.getExerciseId(), exerciseGroup.getGroupId())));
     }
 }

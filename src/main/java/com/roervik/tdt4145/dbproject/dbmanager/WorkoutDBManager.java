@@ -31,6 +31,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
             return Optional.empty();
         }
         final Workout workout = Workout.builder()
+                .workoutId(workoutId)
                 .performance(result.getInt("performance"))
                 .personalShape(result.getInt("personalShape"))
                 .startTime(result.getTimestamp("startTime").toLocalDateTime())
@@ -50,6 +51,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
         while(result.next()) {
             UUID workoutId = UUID.fromString(result.getString("workoutId"));
             final Workout workout = Workout.builder()
+                    .workoutId(workoutId)
                     .performance(result.getInt("performance"))
                     .personalShape(result.getInt("personalShape"))
                     .startTime(result.getTimestamp("startTime").toLocalDateTime())

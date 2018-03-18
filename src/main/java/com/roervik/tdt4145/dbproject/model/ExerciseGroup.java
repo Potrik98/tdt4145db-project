@@ -17,14 +17,15 @@ public class ExerciseGroup {
     public static final Ordering<ExerciseGroup> ordering =
             Ordering.from(Comparator.comparing(ExerciseGroup::getGroupId));
 
-    @Builder.Default
-    final UUID groupId = UUID.randomUUID();
+    final UUID groupId;
     final String name;
     final List<Exercise> exercises;
     final List<ExerciseWithEquipment> exerciseWithEquipments;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class ExerciseGroupBuilder {
-
+        public ExerciseGroupBuilder() {
+            this.groupId = UUID.randomUUID();
+        }
     }
 }

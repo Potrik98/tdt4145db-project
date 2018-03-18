@@ -15,13 +15,14 @@ import java.util.UUID;
 public class Equipment {
     public static final Ordering<Equipment> ordering = Ordering.from(Comparator.comparing(Equipment::getEquipmentId));
 
-    @Builder.Default
-    final UUID equipmentId = UUID.randomUUID();
+    final UUID equipmentId;
     final String name;
     final String description;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class EquipmentBuilder {
-
+        public EquipmentBuilder() {
+            this.equipmentId = UUID.randomUUID();
+        }
     }
 }

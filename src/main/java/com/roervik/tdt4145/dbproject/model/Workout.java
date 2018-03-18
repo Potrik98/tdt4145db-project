@@ -17,8 +17,7 @@ import java.util.UUID;
 public class Workout {
     public static final Ordering<Workout> ordering = Ordering.from(Comparator.comparing(Workout::getEndTime));
 
-    @Builder.Default
-    final UUID workoutId = UUID.randomUUID();
+    final UUID workoutId;
     final Integer performance;
     final Integer personalShape;
     final LocalDateTime startTime;
@@ -28,6 +27,8 @@ public class Workout {
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class WorkoutBuilder {
-
+        public WorkoutBuilder() {
+            this.workoutId = UUID.randomUUID();
+        }
     }
 }
