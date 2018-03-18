@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -41,33 +42,45 @@ public class Client {
                     Class.forName("com.roervik.tdt4145.dbproject.model." + arguments.get("object")))));
 
     private static final Consumer<Map<String, String>> resultsAction = arguments ->
-            uncheckRun(() -> writeForEach(((Map<?, WorkoutResult>)
-                    (
-                            arguments.containsKey("id")
-                                    ? Stream.of(dbManagers.get(arguments.get("object"))
-                                            .getById(UUID.fromString(arguments.get("id"))))
-                                    : dbManagers.get(arguments.get("object")).getAll().stream()
-                    )
-                    .collect(Collectors.toMap(
-                            Function.identity(),
-                            ex -> uncheckCall(() -> WorkoutResult.ofWorkouts(
-                                            workoutDBManager.getAll().stream()
-                                            .filter(workout -> uncheckCall(() ->
-                                                    (
-                                                            (List) workout.getClass()
-                                                                    .getMethod("get" + arguments.get("object") + "s")
-                                                                    .invoke(workout)
-                                                    ).stream()
-                                                    .map(o -> uncheckCall(() ->
-                                                            (UUID) o.getClass().getMethod("getExerciseId").invoke(o)))
-                                                    .anyMatch(id -> id.equals(uncheckCall(() ->
-                                                            (UUID) ex.getClass().getMethod("getExerciseId").invoke(ex)
-                                                    )))
-                                            ))
-                                            .collect(Collectors.toList())
-                                    )
+            uncheckRun(() -> writeForEach(
+                    ((Map<?, WorkoutResult>)
+                            (
+                                    arguments.containsKey("id")
+                                            ? Stream.of(dbManagers.get(arguments.get("object"))
+                                                    .getById(UUID.fromString(arguments.get("id"))))
+                                            : dbManagers.get(arguments.get("object")).getAll().stream()
                             )
-                    ))).entrySet().stream(),
+                            .collect(Collectors.toMap(
+                                    Function.identity(),
+                                    ex -> uncheckCall(() -> WorkoutResult.ofWorkouts(
+                                                    workoutDBManager.getAll().stream()
+                                                    .filter(workout -> arguments.containsKey("startTime")
+                                                            ? LocalDateTime.parse(arguments.get("startTime"))
+                                                                    .isBefore(workout.getStartTime())
+                                                            : true
+                                                    )
+                                                    .filter(workout -> arguments.containsKey("endTime")
+                                                            ? LocalDateTime.parse(arguments.get("endTime"))
+                                                            .isAfter(workout.getEndTime())
+                                                            : true
+                                                    )
+                                                    .filter(workout -> uncheckCall(() ->
+                                                            (
+                                                                    (List) workout.getClass()
+                                                                            .getMethod("get" + arguments.get("object") + "s")
+                                                                            .invoke(workout)
+                                                            ).stream()
+                                                            .map(o -> uncheckCall(() ->
+                                                                    (UUID) o.getClass().getMethod("getExerciseId").invoke(o)))
+                                                            .anyMatch(id -> id.equals(uncheckCall(() ->
+                                                                    (UUID) ex.getClass().getMethod("getExerciseId").invoke(ex)
+                                                            )))
+                                                    ))
+                                                    .collect(Collectors.toList())
+                                            )
+                                    )
+                            ))
+                    ).entrySet().stream(),
                     o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
                     arguments
             ));
