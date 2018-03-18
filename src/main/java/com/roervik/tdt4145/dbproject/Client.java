@@ -2,13 +2,16 @@ package com.roervik.tdt4145.dbproject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.roervik.tdt4145.dbproject.model.WorkoutResult;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,10 +40,43 @@ public class Client {
                     mapper.readValue(readFile(arguments.get("input")),
                     Class.forName("com.roervik.tdt4145.dbproject.model." + arguments.get("object")))));
 
+    private static final Consumer<Map<String, String>> resultsAction = arguments ->
+            uncheckRun(() -> writeForEach(((Map<?, WorkoutResult>)
+                    (
+                            arguments.containsKey("id")
+                                    ? Stream.of(dbManagers.get(arguments.get("object"))
+                                            .getById(UUID.fromString(arguments.get("id"))))
+                                    : dbManagers.get(arguments.get("object")).getAll().stream()
+                    )
+                    .collect(Collectors.toMap(
+                            Function.identity(),
+                            ex -> uncheckCall(() -> WorkoutResult.ofWorkouts(
+                                            workoutDBManager.getAll().stream()
+                                            .filter(workout -> uncheckCall(() ->
+                                                    (
+                                                            (List) workout.getClass()
+                                                                    .getMethod("get" + arguments.get("object") + "s")
+                                                                    .invoke(workout)
+                                                    ).stream()
+                                                    .map(o -> uncheckCall(() ->
+                                                            (UUID) o.getClass().getMethod("getExerciseId").invoke(o)))
+                                                    .anyMatch(id -> id.equals(uncheckCall(() ->
+                                                            (UUID) ex.getClass().getMethod("getExerciseId").invoke(ex)
+                                                    )))
+                                            ))
+                                            .collect(Collectors.toList())
+                                    )
+                            )
+                    ))).entrySet().stream(),
+                    o -> uncheckCall(() -> mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o)),
+                    arguments
+            ));
+
     private static final Map<String, Consumer<Map<String, String>>> actions =
             ImmutableMap.of(
                     "list", listAction,
-                    "create", createAction);
+                    "create", createAction,
+                    "results", resultsAction);
 
     public static void main(String[] args) throws Exception {
         final Map<String, String> arguments = parseArguments(args);
