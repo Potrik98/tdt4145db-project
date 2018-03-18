@@ -14,14 +14,21 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.roervik.tdt4145.dbproject.Program.*;
-import static com.roervik.tdt4145.dbproject.util.StreamUtils.*;
+import static com.roervik.tdt4145.dbproject.Program.equipmentDBManager;
+import static com.roervik.tdt4145.dbproject.Program.exerciseDBManager;
+import static com.roervik.tdt4145.dbproject.Program.exerciseGroupDBManager;
+import static com.roervik.tdt4145.dbproject.Program.exerciseWithEquipmentDBManager;
+import static com.roervik.tdt4145.dbproject.Program.workoutDBManager;
+import static com.roervik.tdt4145.dbproject.util.StreamUtils.readFile;
+import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckCall;
+import static com.roervik.tdt4145.dbproject.util.StreamUtils.uncheckRun;
 
 public class Client {
     private static final ObjectMapper mapper = new ObjectMapper()
@@ -125,9 +132,8 @@ public class Client {
                     "results", resultsAction);
 
     public static void main(String[] args) throws Exception {
-        final Map<String, String> arguments = parseArguments(args);
+        Scanner input = new Scanner(System.in);
         Program.init();
-        System.out.println(args[0] + " object " + arguments.get("object"));
         dbManagers = ImmutableMap.of(
                 "Equipment", equipmentDBManager,
                 "Exercise", exerciseDBManager,
@@ -137,9 +143,19 @@ public class Client {
         relationDBManagers = ImmutableMap.of(
                 "Workout", workoutDBManager,
                 "ExerciseGroup", exerciseGroupDBManager);
-        actions.get(args[0]).accept(arguments);
+        System.out.println("Ready for commands");
+        while (true) {
+            String line = input.nextLine();
+            if (line.startsWith("exit") || line.startsWith("quit")) {
+                break;
+            }
+            final String[] lineArgs = line.split(" ");
+            final Map<String, String> arguments = parseArguments(lineArgs);
+            actions.get(lineArgs[0]).accept(arguments);
+        }
         Program.closeConnections();
-        System.out.println("Done");
+        System.out.println("Shutting down...");
+        input.close();
     }
 
     private static <T> void writeForEach(final Stream<T> iterable,
