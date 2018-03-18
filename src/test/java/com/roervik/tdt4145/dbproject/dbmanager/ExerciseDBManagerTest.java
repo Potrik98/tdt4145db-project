@@ -1,6 +1,5 @@
-package dbmanager;
+package com.roervik.tdt4145.dbproject.dbmanager;
 
-import com.roervik.tdt4145.dbproject.dbmanager.ExerciseDBManager;
 import com.roervik.tdt4145.dbproject.model.Exercise;
 import org.junit.After;
 import org.junit.Before;

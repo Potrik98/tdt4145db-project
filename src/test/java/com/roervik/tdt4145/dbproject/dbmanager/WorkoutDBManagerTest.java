@@ -1,26 +1,27 @@
-package dbmanager;
+package com.roervik.tdt4145.dbproject.dbmanager;
 
 import com.google.common.collect.ImmutableList;
 import com.roervik.tdt4145.dbproject.Program;
 import com.roervik.tdt4145.dbproject.model.Equipment;
 import com.roervik.tdt4145.dbproject.model.Exercise;
 import com.roervik.tdt4145.dbproject.model.ExerciseWithEquipment;
-import com.roervik.tdt4145.dbproject.model.ExerciseGroup;
+import com.roervik.tdt4145.dbproject.model.Workout;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.roervik.tdt4145.dbproject.Program.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ExerciseGroupDBManagerTest {
+public class WorkoutDBManagerTest {
     @Before
     public void openDBManager() throws Exception {
         Program.init();
-        exerciseGroupDBManager.loadCreateScript();
+        workoutDBManager.loadCreateScript();
     }
 
     @After
@@ -29,7 +30,7 @@ public class ExerciseGroupDBManagerTest {
     }
 
     @Test
-    public void testCreateAndGetExerciseGroupWithExercises() throws Exception {
+    public void testCreateAndGetWorkoutWithExercises() throws Exception {
         final Equipment equipment = Equipment.builder()
                 .description("MyDescription")
                 .name("EquipmentName")
@@ -52,26 +53,29 @@ public class ExerciseGroupDBManagerTest {
                 .description("MyDescription")
                 .name("ExerciseName")
                 .build();
-        final ExerciseGroup exerciseGroup = ExerciseGroup.builder()
-                .name("GroupName")
+        final Workout workout = Workout.builder()
+                .performance(123)
+                .personalShape(123)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now())
                 .exercises(Exercise.ordering.immutableSortedCopy(
                         ImmutableList.of(createdExercise, notCreatedExercise)))
                 .exercisesWithEquipment(ExerciseWithEquipment.ordering.immutableSortedCopy(
                         ImmutableList.of(createdExerciseWithEquiment, notCreatedExerciseWithEquipment)))
                 .build();
-        exerciseGroupDBManager.create(exerciseGroup);
+        workoutDBManager.create(workout);
 
-        final Optional<ExerciseGroup> retrievedExerciseGroup =
-                exerciseGroupDBManager.getById(exerciseGroup.getGroupId());
-        assertThat(retrievedExerciseGroup).isPresent();
-        assertThat(retrievedExerciseGroup.get()).isEqualToComparingFieldByFieldRecursively(exerciseGroup);
+        final Optional<Workout> retrievedWorkout =
+                workoutDBManager.getById(workout.getWorkoutId());
+        assertThat(retrievedWorkout).isPresent();
+        assertThat(retrievedWorkout.get()).isEqualToComparingFieldByFieldRecursively(workout);
     }
 
     @Test
-    public void testGetExerciseGroupWithInvalidId() throws Exception {
+    public void testGetWorkoutWithInvalidId() throws Exception {
         final UUID invalidId = UUID.randomUUID();
-        final Optional<ExerciseGroup> retrievedExerciseGroup =
-                exerciseGroupDBManager.getById(invalidId);
-        assertThat(retrievedExerciseGroup).isEmpty();
+        final Optional<Workout> retrievedWorkout =
+                workoutDBManager.getById(invalidId);
+        assertThat(retrievedWorkout).isEmpty();
     }
 }

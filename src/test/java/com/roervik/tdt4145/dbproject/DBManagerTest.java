@@ -1,3 +1,5 @@
+package com.roervik.tdt4145.dbproject;
+
 import com.roervik.tdt4145.dbproject.DBManager;
 import com.roervik.tdt4145.dbproject.dbmanager.WorkoutDBManager;
 import org.junit.Test;

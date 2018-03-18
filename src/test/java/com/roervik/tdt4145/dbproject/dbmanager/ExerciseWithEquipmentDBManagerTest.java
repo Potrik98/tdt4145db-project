@@ -1,4 +1,4 @@
-package dbmanager;
+package com.roervik.tdt4145.dbproject.dbmanager;
 
 import com.roervik.tdt4145.dbproject.Program;
 import com.roervik.tdt4145.dbproject.model.Equipment;
