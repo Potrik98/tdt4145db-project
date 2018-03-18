@@ -98,7 +98,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
                 .filter(exercise -> uncheckCall(() ->
                         !exerciseDBManager.getById(exercise.getExerciseId()).isPresent()))
                 .forEach(exercise -> uncheckRun(() -> exerciseDBManager.create(exercise)));
-        workout.getExercisesWithEquipment().stream()
+        workout.getExerciseWithEquipments().stream()
                 .filter(exercise -> uncheckCall(() ->
                         !exerciseWithEquipmentDBManager
                                 .getById(exercise.getExerciseId()).isPresent()))
@@ -107,7 +107,7 @@ public class WorkoutDBManager extends DBManager<Workout> {
 
         workout.getExercises().forEach(exercise -> uncheckRun(() ->
                 addExerciseToWorkout(exercise.getExerciseId(), workout.getWorkoutId())));
-        workout.getExercisesWithEquipment().forEach(exercise -> uncheckRun(() ->
+        workout.getExerciseWithEquipments().forEach(exercise -> uncheckRun(() ->
                 addExerciseWithEquipmentToWorkout(exercise.getExerciseId(), workout.getWorkoutId())));
     }
 }

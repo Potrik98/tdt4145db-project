@@ -24,7 +24,7 @@ public class Workout {
     final LocalDateTime startTime;
     final LocalDateTime endTime;
     final List<Exercise> exercises;
-    final List<ExerciseWithEquipment> exercisesWithEquipment;
+    final List<ExerciseWithEquipment> exerciseWithEquipments;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static final class WorkoutBuilder {
