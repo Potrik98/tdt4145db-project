@@ -16,14 +16,14 @@ public class EquipmentDBManager extends DBManager<Equipment> {
     }
 
     public List<Equipment> getAll() throws Exception {
-        final String query = "select equipmentId, name, description from Equipment;";
+        final String query = "select equipmentId, equipmentName, description from Equipment;";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         final ResultSet result = statement.getStatement().executeQuery();
         final List<Equipment> equipments = new ArrayList<>();
         while(result.next()) {
             final Equipment equipment = Equipment.builder()
                     .equipmentId(UUID.fromString(result.getString("equipmentId")))
-                    .name(result.getString("name"))
+                    .name(result.getString("equipmentName"))
                     .description(result.getString("description"))
                     .build();
             equipments.add(equipment);
@@ -32,7 +32,7 @@ public class EquipmentDBManager extends DBManager<Equipment> {
     }
 
     public Optional<Equipment> getById(final UUID equipmentId) throws Exception {
-        final String query = "select name, description from Equipment" +
+        final String query = "select equipmentName, description from Equipment" +
                 " where equipmentId = :equipmentId:";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("equipmentId", equipmentId.toString());
@@ -42,18 +42,18 @@ public class EquipmentDBManager extends DBManager<Equipment> {
         }
         final Equipment equipment = Equipment.builder()
                 .equipmentId(equipmentId)
-                .name(result.getString("name"))
+                .name(result.getString("equipmentName"))
                 .description(result.getString("description"))
                 .build();
         return Optional.of(equipment);
     }
 
     public void create(final Equipment equipment) throws Exception {
-        String query = "insert into Equipment (equipmentId, name, description)" +
-                " values (:equipmentId:, :name:, :description:);";
+        String query = "insert into Equipment (equipmentId, equipmentName, description)" +
+                " values (:equipmentId:, :equipmentName:, :description:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("equipmentId", equipment.getEquipmentId().toString());
-        statement.setString("name", equipment.getName());
+        statement.setString("equipmentName", equipment.getName());
         statement.setString("description", equipment.getDescription());
         statement.getStatement().executeUpdate();
     }

@@ -21,7 +21,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
     }
 
     public Optional<ExerciseGroup> getById(final UUID groupId) throws Exception {
-        final String query = "select name from ExerciseGroup" +
+        final String query = "select groupName from ExerciseGroup" +
                 " where groupId = :groupId:";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("groupId", groupId.toString());
@@ -31,7 +31,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
         }
         final ExerciseGroup exerciseGroup = ExerciseGroup.builder()
                 .groupId(groupId)
-                .name(result.getString("name"))
+                .name(result.getString("groupName"))
                 .exercises(exerciseDBManager.getExercisesInExerciseGroup(groupId))
                 .exercisesWithEquipment(exerciseWithEquipmentDBManager
                         .getExerciseWithEquipmentsInExerciseGroup(groupId))
@@ -40,7 +40,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
     }
 
     public List<ExerciseGroup> getAll() throws Exception {
-        final String query = "select groupId, name from ExerciseGroup;";
+        final String query = "select groupId, groupName from ExerciseGroup;";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         final ResultSet result = statement.getStatement().executeQuery();
         final List<ExerciseGroup> exerciseGroups = new ArrayList<>();
@@ -48,7 +48,7 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
             UUID groupId = UUID.fromString(result.getString("groupId"));
             final ExerciseGroup exerciseGroup = ExerciseGroup.builder()
                     .groupId(groupId)
-                    .name(result.getString("name"))
+                    .name(result.getString("groupName"))
                     .exercises(exerciseDBManager.getExercisesInExerciseGroup(groupId))
                     .exercisesWithEquipment(exerciseWithEquipmentDBManager
                             .getExerciseWithEquipmentsInExerciseGroup(groupId))
@@ -77,11 +77,11 @@ public class ExerciseGroupDBManager extends DBManager<ExerciseGroup> {
     }
 
     public void create(final ExerciseGroup exerciseGroup) throws Exception {
-        String query = "insert into ExerciseGroup (groupId, name)" +
-                " values (:groupId:, :name:);";
+        String query = "insert into ExerciseGroup (groupId, groupName)" +
+                " values (:groupId:, :groupName:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("groupId", exerciseGroup.getGroupId().toString());
-        statement.setString("name", exerciseGroup.getName());
+        statement.setString("groupName", exerciseGroup.getName());
         statement.getStatement().executeUpdate();
         exerciseGroup.getExercises().stream()
                 .filter(exercise -> uncheckCall(() ->

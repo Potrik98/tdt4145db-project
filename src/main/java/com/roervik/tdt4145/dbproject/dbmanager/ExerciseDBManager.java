@@ -16,14 +16,14 @@ public class ExerciseDBManager extends DBManager<Exercise> {
     }
 
     public List<Exercise> getAll() throws Exception {
-        final String query = "select exerciseId, name, description from Exercise;";
+        final String query = "select exerciseId, exerciseName, description from Exercise;";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         final ResultSet result = statement.getStatement().executeQuery();
         final List<Exercise> exercises = new ArrayList<>();
         while(result.next()) {
             final Exercise exercise = Exercise.builder()
                     .exerciseId(UUID.fromString(result.getString("exerciseId")))
-                    .name(result.getString("name"))
+                    .name(result.getString("exerciseName"))
                     .description(result.getString("description"))
                     .build();
             exercises.add(exercise);
@@ -32,7 +32,7 @@ public class ExerciseDBManager extends DBManager<Exercise> {
     }
 
     public Optional<Exercise> getById(final UUID exerciseId) throws Exception {
-        final String query = "select name, description from Exercise" +
+        final String query = "select exerciseName, description from Exercise" +
                 " where exerciseId = :exerciseId:";
         final NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("exerciseId", exerciseId.toString());
@@ -42,14 +42,14 @@ public class ExerciseDBManager extends DBManager<Exercise> {
         }
         final Exercise exercise = Exercise.builder()
                 .exerciseId(exerciseId)
-                .name(result.getString("name"))
+                .name(result.getString("exerciseName"))
                 .description(result.getString("description"))
                 .build();
         return Optional.of(exercise);
     }
 
     public List<Exercise> getExercisesInWorkout(final UUID workoutId) throws Exception {
-        final String query = "select Exercise.exerciseId, name, description from Exercise" +
+        final String query = "select Exercise.exerciseId, exerciseName, description from Exercise" +
                 " join ExerciseInWorkout" +
                 " on Exercise.exerciseId = ExerciseInWorkout.exerciseId" +
                 " where workoutId = :workoutId:" +
@@ -61,7 +61,7 @@ public class ExerciseDBManager extends DBManager<Exercise> {
         while(result.next()) {
             final Exercise exercise = Exercise.builder()
                     .exerciseId(UUID.fromString(result.getString("exerciseId")))
-                    .name(result.getString("name"))
+                    .name(result.getString("exerciseName"))
                     .description(result.getString("description"))
                     .build();
             exercises.add(exercise);
@@ -70,7 +70,7 @@ public class ExerciseDBManager extends DBManager<Exercise> {
     }
 
     public List<Exercise> getExercisesInExerciseGroup(final UUID groupId) throws Exception {
-        final String query = "select Exercise.exerciseId, name, description from Exercise" +
+        final String query = "select Exercise.exerciseId, exerciseName, description from Exercise" +
                 " join ExerciseInGroup" +
                 " on Exercise.exerciseId = ExerciseInGroup.exerciseId" +
                 " where groupId = :groupId:" +
@@ -82,7 +82,7 @@ public class ExerciseDBManager extends DBManager<Exercise> {
         while(result.next()) {
             final Exercise exercise = Exercise.builder()
                     .exerciseId(UUID.fromString(result.getString("exerciseId")))
-                    .name(result.getString("name"))
+                    .name(result.getString("exerciseName"))
                     .description(result.getString("description"))
                     .build();
             exercises.add(exercise);
@@ -91,11 +91,11 @@ public class ExerciseDBManager extends DBManager<Exercise> {
     }
 
     public void create(final Exercise exercise) throws Exception {
-        String query = "insert into Exercise (exerciseId, name, description)" +
-                " values (:exerciseId:, :name:, :description:);";
+        String query = "insert into Exercise (exerciseId, exerciseName, description)" +
+                " values (:exerciseId:, :exerciseName:, :description:);";
         NamedParameterStatement statement = new NamedParameterStatement(query, connection);
         statement.setString("exerciseId", exercise.getExerciseId().toString());
-        statement.setString("name", exercise.getName());
+        statement.setString("exerciseName", exercise.getName());
         statement.setString("description", exercise.getDescription());
         statement.getStatement().executeUpdate();
     }

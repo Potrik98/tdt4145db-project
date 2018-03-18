@@ -8,13 +8,13 @@ CREATE TABLE Workout(
 
 CREATE TABLE Equipment(
   equipmentId varchar(36) NOT NULL PRIMARY KEY,
-  name varchar(30),
+  equipmentName varchar(30),
   description varchar(255)
 );
 
 CREATE TABLE Exercise(
   exerciseId varchar(36) NOT NULL PRIMARY KEY,
-  name varchar(30),
+  exerciseName varchar(30),
   description varchar(255)
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE ExerciseWithEquipment(
 
 CREATE TABLE ExerciseGroup(
   groupId varchar(36) NOT NULL PRIMARY KEY,
-  name varchar(30)
+  groupName varchar(30)
 );
 
 CREATE TABLE ExerciseInWorkout(
