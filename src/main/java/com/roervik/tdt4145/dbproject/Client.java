@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -39,10 +40,32 @@ public class Client {
 
     private static final Consumer<Map<String, String>> listRelatedAction = arguments ->
             uncheckRun(() -> writeForEach(
-                    ((List<?>) relationDBManagers.get(arguments.get("in")).getClass()
-                            .getMethod("getRelated" + arguments.get("object") + "s", UUID.class)
-                            .invoke(relationDBManagers.get(arguments.get("in")),
-                                    UUID.fromString(arguments.get("id"))
+                    ((List<?>) (arguments.containsKey("id")
+                                    ? relationDBManagers.get(arguments.get("in")).getClass()
+                                            .getMethod("getRelated" + arguments.get("object") + "s", UUID.class)
+                                            .invoke(relationDBManagers.get(arguments.get("in")),
+                                                    UUID.fromString(arguments.get("id"))
+                                            )
+                                    : ((List<?>) relationDBManagers.get(arguments.get("in")).getAll()).stream()
+                                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("startTime")
+                                                    || Objects.isNull(obj.getClass().getMethod("getStartTime"))
+                                                    || LocalDateTime.parse(arguments.get("startTime"))
+                                                            .isBefore((LocalDateTime) obj.getClass()
+                                                                    .getMethod("getStartTime").invoke(obj))
+                                            ))
+                                            .filter(obj -> uncheckCall(() -> !arguments.containsKey("endTime")
+                                                    || Objects.isNull(obj.getClass().getMethod("getEndTime"))
+                                                    || LocalDateTime.parse(arguments.get("endTime"))
+                                                            .isAfter((LocalDateTime) obj.getClass()
+                                                                    .getMethod("getEndTime").invoke(obj))
+                                            ))
+                                            .map(obj -> uncheckCall(() -> (List<?>) obj.getClass()
+                                                    .getMethod("get" + arguments.get("object") + "s")
+                                                    .invoke(obj)
+                                            ))
+                                            .flatMap(List::stream)
+                                            .distinct()
+                                            .collect(Collectors.toList())
                             )
                     )
                     .stream(),
