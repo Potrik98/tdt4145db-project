@@ -139,7 +139,7 @@ public class Client {
                     ((Map<?, WorkoutResult>)
                             (arguments.containsKey("id")
                                     ? Stream.of(dbManagers.get(arguments.get("object"))
-                                            .getById(UUID.fromString(arguments.get("id"))))
+                                            .getById(UUID.fromString(arguments.get("id"))).get())
                                     : ((List<?>) dbManagers.get(arguments.get("object")).getAll()).stream()
                             )
                             .collect(Collectors.toMap(
